@@ -80,5 +80,14 @@ Thumbs.db
 *.mov
 *.wmv
 
+# Ignoriere alle Dateien in obj und darunterliegenden Verzeichnissen
+obj/
 
+# Ignoriere spezifische .NET Build-Dateien
+*.dll
+*.pdb
+*.exe
+
+# Ignoriere Assembly-Info-Dateien
+AssemblyInfo.*
 
