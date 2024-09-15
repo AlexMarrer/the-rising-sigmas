@@ -9,11 +9,16 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { HomePage } from './home/home.page';
 import { WorkoutPage } from './workout/workout.page';
+import { AccountPage } from './account/account.page';
+import { PlanPage } from './plan/plan.page';
+import { SettingsPage } from './settings/settings.page';
 
 const routes: Routes = [
   { path: 'home', component: HomePage, data: { title: 'Home' } },
   { path: 'workout', component: WorkoutPage, data: { title: 'Workout' } },
-  
+  { path: 'account', component: AccountPage, data: { title: 'Account' } },
+  { path: 'plan', component: PlanPage, data: { title: 'Plan' } },
+  { path: 'settings', component: SettingsPage, data: { title: 'Settings' } },
   // Weitere Routen
 ];
 

@@ -6,7 +6,9 @@ import { Title } from '@angular/platform-browser';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
+
 export class HomePage {
+  
   constructor(private titleService: Title) {
     this.titleService.setTitle('Home');
   }
