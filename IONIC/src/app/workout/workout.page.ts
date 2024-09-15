@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-workout',
@@ -7,9 +8,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WorkoutPage implements OnInit {
 
-  constructor() { }
+  titleService?: Title;
+
+  constructor(titleService: Title) {
+    this.titleService = titleService;
+
+  }
 
   ngOnInit() {
+    this.titleService.setTitle('Workout');
   }
 
 }

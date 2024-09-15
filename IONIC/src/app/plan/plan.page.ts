@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-plan',
@@ -7,9 +8,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PlanPage implements OnInit {
 
-  constructor() { }
+  titleService: Title;
+
+  constructor(titleService: Title) {
+    this.titleService = titleService;
+  }
 
   ngOnInit() {
+    this.titleService.setTitle('Plan');
   }
 
 }
