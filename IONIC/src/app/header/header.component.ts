@@ -33,6 +33,5 @@ export class HeaderComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit() {
-    this.title = this.titleService?.getTitle();
   }
 }

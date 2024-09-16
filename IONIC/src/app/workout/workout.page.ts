@@ -12,7 +12,6 @@ export class WorkoutPage implements OnInit {
 
   constructor(titleService: Title) {
     this.titleService = titleService;
-
   }
 
   ngOnInit() {
