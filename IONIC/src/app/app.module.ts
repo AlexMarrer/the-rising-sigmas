@@ -12,6 +12,10 @@ import { WorkoutPage } from './workout/workout.page';
 import { AccountPage } from './account/account.page';
 import { PlanPage } from './plan/plan.page';
 import { SettingsPage } from './settings/settings.page';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+
+import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 const routes: Routes = [
   { path: 'home', component: HomePage, data: { title: 'Home' } },
@@ -22,10 +26,24 @@ const routes: Routes = [
   // Weitere Routen
 ];
 
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
+
 @NgModule({
   declarations: [AppComponent, HeaderComponent],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, RouterModule.forRoot(routes)],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, RouterModule.forRoot(routes),
+    HttpClientModule, 
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient],
+      },
+    })
+  ],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
   bootstrap: [AppComponent],
 })
+
 export class AppModule {}
