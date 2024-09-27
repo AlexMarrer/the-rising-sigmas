@@ -1,3 +1,26 @@
 {
-    "TITLE": "Hello World"
+  "HEADER": {
+    "TITLE": "My App",
+    "LOGOUT": "Logout"
+  },
+  "HOME": {
+    "TITLE": "Welcome",
+    "subtitle": "This is the home page"
+  },
+  "PLAN": {
+    "TITLE": "Plan",
+    "subtitle": "This is the plan page"
+  },
+  "SETTINGS": {
+    "TITLE": "Settings",
+    "subtitle": "This is the settings page"
+  },
+  "ACCOUNT": {
+    "TITLE": "Account",
+    "subtitle": "This is the account page"
+  },
+  "WORKOUT": {
+    "TITLE": "Workout",
+    "SUBTITLE": "This is the workout page"
+  }
 }
