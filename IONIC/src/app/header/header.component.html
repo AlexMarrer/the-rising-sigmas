@@ -1,18 +1,34 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <div class="header__content">
-      <ion-title>{{ "HEADER.TITLE" | translate }}</ion-title>
-      <img
-        src="/assets/icon/nmixx-logo.jpg"
-        alt="logo"
-        class="header__nmixxlogo"
-      />
-      <button (click)="changeLanguage('en')" class="header__language">
-        English
-      </button>
-      <button (click)="changeLanguage('de')" class="header__language">
-        Deutsch
-      </button>
-    </div>
+<ion-header class="header" [translucent]="true">
+  <ion-toolbar class="header__container">
+    <img src="/assets/icon/nmixx-logo.jpg" alt="logo" class="header__logo" slot="start" />
+    <ion-title class="header__title" slot="end">
+      {{ title }}
+    </ion-title>
+
+    <ion-segment class="header__language-buttons" value="{{ 'LANGUAGE' | translate }}" slot="end">
+      <ion-segment-button class="header__language-button" (click)="changeLanguage('de')" value="DE">
+        <ion-label>
+          <span class="header__full-text">Deutsch</span>
+          <span class="header__short-text">DE</span>
+        </ion-label>
+      </ion-segment-button>
+      <ion-segment-button class="header__language-button" (click)="changeLanguage('en')" value="EN">
+        <span class="header__full-text">English</span>
+        <span class="header__short-text">EN</span>
+      </ion-segment-button>
+    </ion-segment>
+
+    <ion-list class="header__language-picker" slot="end" (ionChange)="changeLanguage($event)">
+      <ion-item>
+        <ion-select
+          label="Language"
+          label-placement="floating"
+          value="{{ 'LANGUAGE' | translate }}"
+        >
+          <ion-select-option (click)="changeLanguage('de')" value="DE"> Deutsch </ion-select-option>
+          <ion-select-option (click)="changeLanguage('en')" value="EN"> English </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ion-list>
   </ion-toolbar>
 </ion-header>

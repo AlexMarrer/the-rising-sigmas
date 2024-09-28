@@ -1,10 +1,10 @@
 {
+  "LANGUAGE": "DE",
   "HEADER": {
-    "TITLE": "Meine App",
     "SUBTITLE": "Abmelden"
   },
   "HOME": {
-    "TITLE": "Willkommen",
+    "TITLE": "Start",
     "SUBTITLE": "Das ist die Startseite"
   },
   "PLAN": {
