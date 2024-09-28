@@ -1,9 +1,65 @@
-.header__nmixxlogo {
-  width: 200px;
-  height: 100px;
+.header {
+  &__container {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  &__logo {
+    width: 10rem;
+  }
+
+  &__language-buttons {
+    width: min-content;
+    height: 100%;
+  }
+
+  &__language-button {
+    width: clamp(2.5rem, 10vw, 15rem);
+  }
+
+  &__language-picker,
+  &__language-picker-column {
+    display: none;
+    height: 100px;
+  }
+
+  &__short-text {
+    display: none;
+  }
+
+  &__language-icon {
+    height: 2rem;
+  }
 }
 
-.header__content {
+.toolbar-container {
   display: flex;
-  justify-content: space-evenly;
+  flex: unset;
+  order: unset;
+}
+
+@media screen and (width < 1065px) {
+  .header {
+    &__short-text {
+      display: block;
+    }
+
+    &__full-text {
+      display: none;
+    }
+  }
+}
+
+@media screen and (width < 560px) {
+  .header {
+    &__language-buttons {
+      display: none;
+    }
+
+    &__language-picker {
+      display: block;
+      width: 10rem;
+      height: 100%;
+    }
+  }
 }

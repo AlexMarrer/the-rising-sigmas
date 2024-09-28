@@ -1,0 +1,26 @@
+{
+  "LANGUAGE": "EN",
+  "HEADER": {
+    "LOGOUT": "Logout"
+  },
+  "HOME": {
+    "TITLE": "Home",
+    "SUBTITLE": "This is the home page"
+  },
+  "PLAN": {
+    "TITLE": "Plan",
+    "SUBTITLE": "This is the plan page"
+  },
+  "SETTINGS": {
+    "TITLE": "Settings",
+    "SUBTITLE": "This is the settings page"
+  },
+  "ACCOUNT": {
+    "TITLE": "Account",
+    "SUBTITLE": "This is the account page"
+  },
+  "WORKOUT": {
+    "TITLE": "Workout",
+    "SUBTITLE": "This is the workout page"
+  }
+}

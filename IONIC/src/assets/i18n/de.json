@@ -1,0 +1,26 @@
+{
+  "LANGUAGE": "DE",
+  "HEADER": {
+    "SUBTITLE": "Abmelden"
+  },
+  "HOME": {
+    "TITLE": "Start",
+    "SUBTITLE": "Das ist die Startseite"
+  },
+  "PLAN": {
+    "TITLE": "Plan",
+    "SUBTITLE": "Das ist die Planseite"
+  },
+  "SETTINGS": {
+    "TITLE": "Einstellungen",
+    "SUBTITLE": "Das ist die Einstellungsseite"
+  },
+  "ACCOUNT": {
+    "TITLE": "Konto",
+    "SUBTITLE": "Das ist die Kontoseite"
+  },
+  "WORKOUT": {
+    "TITLE": "Training",
+    "SUBTITLE": "Das ist die Trainingsseite"
+  }
+}

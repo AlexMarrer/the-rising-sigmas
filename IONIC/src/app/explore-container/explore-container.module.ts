@@ -1,14 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
 import { IonicModule } from '@ionic/angular';
-
 import { ExploreContainerComponent } from './explore-container.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
-  imports: [ CommonModule, FormsModule, IonicModule],
+  imports: [CommonModule, FormsModule, IonicModule, TranslateModule],
   declarations: [ExploreContainerComponent],
-  exports: [ExploreContainerComponent]
+  exports: [ExploreContainerComponent],
 })
 export class ExploreContainerComponentModule {}
