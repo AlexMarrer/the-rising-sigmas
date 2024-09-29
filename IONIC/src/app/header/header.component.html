@@ -5,14 +5,19 @@
       {{ title }}
     </ion-title>
 
-    <ion-segment class="header__language-buttons" value="{{ 'LANGUAGE' | translate }}" slot="end">
-      <ion-segment-button class="header__language-button" (click)="changeLanguage('de')" value="DE">
+    <ion-segment
+      class="header__language-buttons"
+      (ionChange)="changeLanguage($event)"
+      value="{{ 'LANGUAGE' | translate }}"
+      slot="end"
+    >
+      <ion-segment-button class="header__language-button" value="DE">
         <ion-label>
           <span class="header__full-text">Deutsch</span>
           <span class="header__short-text">DE</span>
         </ion-label>
       </ion-segment-button>
-      <ion-segment-button class="header__language-button" (click)="changeLanguage('en')" value="EN">
+      <ion-segment-button class="header__language-button" value="EN">
         <span class="header__full-text">English</span>
         <span class="header__short-text">EN</span>
       </ion-segment-button>
@@ -25,8 +30,8 @@
           label-placement="floating"
           value="{{ 'LANGUAGE' | translate }}"
         >
-          <ion-select-option (click)="changeLanguage('de')" value="DE"> Deutsch </ion-select-option>
-          <ion-select-option (click)="changeLanguage('en')" value="EN"> English </ion-select-option>
+          <ion-select-option value="DE"> Deutsch </ion-select-option>
+          <ion-select-option value="EN"> English </ion-select-option>
         </ion-select>
       </ion-item>
     </ion-list>
