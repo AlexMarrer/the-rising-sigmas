@@ -18,6 +18,12 @@ export class HeaderComponent {
   }
 
   initializeTranslation() {
+    const localStoredLang = localStorage.getItem('language');
+    if (localStoredLang) {
+      this.translate.use(localStoredLang);
+      return;
+    }
+
     const browserLang = this.translate.getBrowserLang();
     const langToStore = browserLang.match(/en|de/) ? browserLang : 'en';
     localStorage.setItem('language', langToStore);
