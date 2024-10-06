@@ -30,6 +30,9 @@
     "THURSDAY": "Donnerstag",
     "FRIDAY": "Freitag",
     "SATURDAY": "Samstag",
-    "SUNDAY": "Sonntag"
+    "SUNDAY": "Sonntag",
+    "WEEKLY": "Wöchentlich",
+    "THREE-DAYS": "3-Tage",
+    "DAY": "Tag"
   }
 }

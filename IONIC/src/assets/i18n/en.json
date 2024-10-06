@@ -30,6 +30,9 @@
     "THURSDAY": "Thursday",
     "FRIDAY": "Friday",
     "SATURDAY": "Saturday",
-    "SUNDAY": "Sunday"
+    "SUNDAY": "Sunday",
+    "WEEKLY": "Weekly",
+    "THREE-DAYS": "3-Days",
+    "DAY": "Day"
   }
 }

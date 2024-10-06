@@ -8,12 +8,12 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #1f1f1f;
+  background: map.get(variables.$color-map, "grey");
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #437bdf;
+  background: map.get(variables.$color-map, "primary");
 }
 
 /* Handle on hover */
@@ -34,16 +34,21 @@
     grid-area: main;
     justify-content: space-evenly;
     overflow: hidden;
-    border: 1px solid #437bdf;
+    border: 1px solid map.get(variables.$color-map, "primary");
     border-radius: 20px;
   }
 
   &__column {
+    display: none;
     flex: 1;
-    border-right: 1px solid #437bdf;
+    border-right: 1px solid map.get(variables.$color-map, "primary");
 
     &:last-child {
       border-right: unset;
+    }
+
+    &--active {
+      display: block;
     }
   }
 
@@ -51,8 +56,13 @@
     width: 100%;
     min-width: 6rem;
     padding: 0.5rem 0;
-    border-bottom: 1px solid #437bdf;
+    border-bottom: 1px solid map.get(variables.$color-map, "primary");
     text-align: center;
+
+    &--current-day {
+      background-color: rgba(map.get(variables.$color-map, "primary"), 0.5);
+      color: map.get(variables.$color-map, "white");
+    }
   }
 
   &__add-button {
@@ -65,6 +75,16 @@
     ion-icon {
       font-size: 2rem;
     }
+  }
+
+  &__time-picker {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    width: clamp(6rem, 6rem + 5vw, 10rem);
+    height: min-content;
+    padding: 0;
+    border-radius: 10px;
   }
 }
 
