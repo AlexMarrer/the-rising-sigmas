@@ -1,0 +1,62 @@
+<div class="workout-table">
+  <ion-list class="workout-table__time-picker" slot="end">
+    <ion-item>
+      <ion-select
+        label="View"
+        label-placement="floating"
+        (ionChange)="changeView($event)"
+        value="week"
+      >
+        <ion-select-option value="week">
+          {{ "WORKOUT-TABLE.WEEKLY" | translate }}
+        </ion-select-option>
+        <ion-select-option value="three-day">
+          {{ "WORKOUT-TABLE.THREE-DAYS" | translate }}
+        </ion-select-option>
+        <ion-select-option value="day">
+          {{ "WORKOUT-TABLE.DAY" | translate }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+  <div class="workout-table__table">
+    <div class="workout-table__column workout-table__column--active">
+      <div class="workout-table__header" data-day="monday">
+        {{ "WORKOUT-TABLE.MONDAY" | translate }}
+      </div>
+    </div>
+    <div class="workout-table__column workout-table__column--active">
+      <div class="workout-table__header" data-day="tuesday">
+        {{ "WORKOUT-TABLE.TUESDAY" | translate }}
+      </div>
+    </div>
+    <div class="workout-table__column workout-table__column--active">
+      <div class="workout-table__header" data-day="wednesday">
+        {{ "WORKOUT-TABLE.WEDNESDAY" | translate }}
+      </div>
+    </div>
+    <div class="workout-table__column workout-table__column--active">
+      <div class="workout-table__header" data-day="thursday">
+        {{ "WORKOUT-TABLE.THURSDAY" | translate }}
+      </div>
+    </div>
+    <div class="workout-table__column workout-table__column--active">
+      <div class="workout-table__header" data-day="friday">
+        {{ "WORKOUT-TABLE.FRIDAY" | translate }}
+      </div>
+    </div>
+    <div class="workout-table__column workout-table__column--active">
+      <div class="workout-table__header" data-day="saturday">
+        {{ "WORKOUT-TABLE.SATURDAY" | translate }}
+      </div>
+    </div>
+    <div class="workout-table__column workout-table__column--active">
+      <div class="workout-table__header" data-day="sunday">
+        {{ "WORKOUT-TABLE.SUNDAY" | translate }}
+      </div>
+    </div>
+  </div>
+  <ion-button class="workout-table__add-button" size="small">
+    <ion-icon name="add-circle-outline"></ion-icon>
+  </ion-button>
+</div>

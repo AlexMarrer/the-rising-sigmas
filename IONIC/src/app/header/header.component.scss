@@ -1,3 +1,6 @@
+@use "sass:map";
+@use "src/app/shared/variables" as variables;
+
 .header {
   &__container {
     display: flex;
@@ -38,7 +41,7 @@
   order: unset;
 }
 
-@media screen and (width < 1065px) {
+@media screen and (width < map.get(variables.$size-map, "desktop")) {
   .header {
     &__short-text {
       display: block;
@@ -50,7 +53,7 @@
   }
 }
 
-@media screen and (width < 560px) {
+@media screen and (width < map.get(variables.$size-map, "handy")) {
   .header {
     &__language-buttons {
       display: none;

@@ -22,5 +22,17 @@
   "WORKOUT": {
     "TITLE": "Workout",
     "SUBTITLE": "This is the workout page"
+  },
+  "WORKOUT-TABLE": {
+    "MONDAY": "Monday",
+    "TUESDAY": "Tuesday",
+    "WEDNESDAY": "Wednesday",
+    "THURSDAY": "Thursday",
+    "FRIDAY": "Friday",
+    "SATURDAY": "Saturday",
+    "SUNDAY": "Sunday",
+    "WEEKLY": "Weekly",
+    "THREE-DAYS": "3-Days",
+    "DAY": "Day"
   }
 }

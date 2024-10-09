@@ -1,0 +1,100 @@
+@use "sass:map";
+@use "src/app/shared/variables" as variables;
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: map.get(variables.$color-map, "grey");
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: map.get(variables.$color-map, "primary");
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #235bbf;
+}
+
+.workout-table {
+  display: grid;
+  grid-template:
+    "padding-left main padding-right" 1fr
+    / 1fr 10fr 1fr;
+  height: 100%;
+  padding: 1rem 0;
+
+  &__table {
+    display: flex;
+    grid-area: main;
+    justify-content: space-evenly;
+    overflow: hidden;
+    border: 1px solid map.get(variables.$color-map, "primary");
+    border-radius: 20px;
+  }
+
+  &__column {
+    display: none;
+    flex: 1;
+    border-right: 1px solid map.get(variables.$color-map, "primary");
+
+    &:last-child {
+      border-right: unset;
+    }
+
+    &--active {
+      display: block;
+    }
+  }
+
+  &__header {
+    width: 100%;
+    min-width: 6rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid map.get(variables.$color-map, "primary");
+    text-align: center;
+
+    &--current-day {
+      background-color: rgba(map.get(variables.$color-map, "primary"), 0.5);
+      color: map.get(variables.$color-map, "white");
+    }
+  }
+
+  &__add-button {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    width: 3rem;
+    height: 3rem;
+
+    ion-icon {
+      font-size: 2rem;
+    }
+  }
+
+  &__time-picker {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    width: clamp(6rem, 6rem + 5vw, 10rem);
+    height: min-content;
+    padding: 0;
+    border-radius: 10px;
+  }
+}
+
+@media screen and (width < map.get(variables.$size-map, "tablet")) {
+  .workout-table {
+    padding: 1rem 0.5rem;
+
+    &__table {
+      grid-column: padding-left / padding-right;
+      overflow-x: scroll;
+    }
+  }
+}

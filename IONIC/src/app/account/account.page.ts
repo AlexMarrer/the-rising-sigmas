@@ -7,7 +7,6 @@ import { Title } from '@angular/platform-browser';
   styleUrls: ['./account.page.scss'],
 })
 export class AccountPage implements OnInit {
-
   private titleService: Title;
 
   constructor(titleService: Title) {
@@ -17,5 +16,4 @@ export class AccountPage implements OnInit {
   ngOnInit() {
     this.titleService.setTitle('Account');
   }
-
 }
