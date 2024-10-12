@@ -8,13 +8,7 @@ import { PlanPage } from './plan.page';
 import { SharedModule } from '../shared/shared.module'; // Import SharedModule
 
 @NgModule({
-  imports: [
-    PlanPageRoutingModule,
-    IonicModule,
-    CommonModule,
-    FormsModule,
-    SharedModule,
-  ],
+  imports: [PlanPageRoutingModule, IonicModule, CommonModule, FormsModule, SharedModule],
   declarations: [PlanPage],
 })
 export class PlanPageModule {}

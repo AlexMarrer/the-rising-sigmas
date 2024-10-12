@@ -5,7 +5,7 @@
         label="View"
         label-placement="floating"
         (ionChange)="changeView($event)"
-        value="week"
+        value="{{ requestedView }}"
       >
         <ion-select-option value="week">
           {{ "WORKOUT-TABLE.WEEKLY" | translate }}
@@ -19,7 +19,7 @@
       </ion-select>
     </ion-item>
   </ion-list>
-  <div class="workout-table__table">
+  <div #workoutTable class="workout-table__table">
     <div class="workout-table__column workout-table__column--active">
       <div class="workout-table__header" data-day="monday">
         {{ "WORKOUT-TABLE.MONDAY" | translate }}
@@ -56,7 +56,7 @@
       </div>
     </div>
   </div>
-  <ion-button class="workout-table__add-button" size="small">
+  <ion-button #addButton class="workout-table__add-button" size="small" (click)="onButtonClick()">
     <ion-icon name="add-circle-outline"></ion-icon>
   </ion-button>
 </div>
