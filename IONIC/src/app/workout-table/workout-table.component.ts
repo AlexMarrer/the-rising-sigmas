@@ -1,69 +1,101 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { IonButton } from '@ionic/angular';
 
 @Component({
   selector: 'app-workout-table',
   templateUrl: './workout-table.component.html',
   styleUrls: ['./workout-table.component.scss'],
 })
-export class WorkoutTableComponent implements OnInit {
-  private button: HTMLButtonElement;
-  private workoutTable: HTMLDivElement;
-  private currentDay: HTMLDivElement;
+export class WorkoutTableComponent implements AfterViewInit {
+  // ViewChild is a decorator that configures a view query. The change detection system looks for the first element or the directive matching the selector in the view DOM.
+  // If the view DOM changes, and a new child matches the selector, the property is updated.
+  @ViewChild('addButton', { static: false }) button: IonButton;
+  @ViewChild('workoutTable', { static: false }) workoutTable: ElementRef<HTMLDivElement>;
+
+  private currentDay: HTMLDivElement[] = [];
   private currentDayIndex: number;
+  private days: string[] = [
+    'sunday',
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday',
+  ];
+  private intervalId: any;
+  public requestedView: string;
 
-  ngOnInit(): void {
-    // Get current day
+  ngAfterViewInit(): void {
     this.setCurrentDay();
-    setInterval(() => this.setCurrentDay, 5000);
 
-    this.button = document.querySelector('.workout-table__add-button');
-    this.workoutTable = document.querySelector('.workout-table__table');
+    this.intervalId = setInterval(() => this.setCurrentDay(), 5000);
+  }
 
-    this.button.addEventListener('click', () => {
-      console.log('Button clicked');
-      const div = document.createElement('div');
-      div.innerHTML = 'Hello World';
-      this.workoutTable.appendChild(div);
-    });
+  onButtonClick(): void {
+    console.log('Button clicked');
+    const div = document.createElement('div');
+    div.innerHTML = 'Hello World';
+    if (this.workoutTable && this.workoutTable.nativeElement) {
+      this.workoutTable.nativeElement.appendChild(div);
+    }
   }
 
   setCurrentDay(): void {
     const date = new Date();
-    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    const currentDay = days[date.getDay()];
-    if (this.currentDay !== undefined && this.currentDay.dataset['day'] === currentDay) {
+    const currentDay = this.days[date.getDay()];
+
+    if (this.currentDayIndex === date.getDay()) {
       return;
     }
+
     this.currentDayIndex = date.getDay();
     this.changeCurrentDay(currentDay);
   }
 
   changeView(event: any): void {
     const requestedView = event.detail.value;
+    if (!this.workoutTable || !this.workoutTable.nativeElement) {
+      return;
+    }
+
+    // add or set requestedView to localstorage
+    localStorage.setItem('requestedView', requestedView);
+    this.changeTableView();
+  }
+
+  changeTableView() {
+    this.requestedView = localStorage.getItem('requestedView');
     const tableHeaders = Array.from(
-      document.querySelectorAll<HTMLDivElement>('.workout-table__header')
+      this.workoutTable.nativeElement.querySelectorAll<HTMLDivElement>('.workout-table__header')
     );
 
     tableHeaders.forEach((header) =>
       header.parentElement.classList.remove('workout-table__column--active')
     );
 
-    switch (requestedView) {
+    switch (this.requestedView) {
       case 'week':
         tableHeaders.forEach((header) =>
           header.parentElement.classList.add('workout-table__column--active')
         );
         break;
       case 'three-day':
-        //Index starts from sunday = 0 and ends on saturday = 6 if its sunday we want to show friday, saturday and sunday and if its monday we want to show monday tuesday and wednesday and if its tuesday we want to schow monday tuesday and wednesday
         let startIndex = this.currentDayIndex === 0 ? 4 : this.currentDayIndex - 2;
         startIndex = this.currentDayIndex === 1 ? 0 : startIndex;
         for (let i = 0; i < 3; i++) {
-          tableHeaders[startIndex + i].parentElement.classList.add('workout-table__column--active');
+          const index = startIndex + i;
+          if (tableHeaders[index]) {
+            tableHeaders[index].parentElement.classList.add('workout-table__column--active');
+          }
         }
         break;
       case 'day':
-        this.currentDay.parentElement.classList.add('workout-table__column--active');
+        if (this.currentDay) {
+          this.currentDay.forEach((header) =>
+            header.parentElement.classList.add('workout-table__column--active')
+          );
+        }
         break;
       default:
         tableHeaders.forEach((header) =>
@@ -74,17 +106,27 @@ export class WorkoutTableComponent implements OnInit {
   }
 
   changeCurrentDay(currentDay: string): void {
-    const tableHeaders = Array.from(
-      document.querySelectorAll<HTMLDivElement>('.workout-table__header')
-    );
-    const lastDay = document.querySelector('.workout-table__header--current-day');
-
-    const filteredHeader = tableHeaders.filter((header) => header.dataset['day'] == currentDay);
-    filteredHeader[0].classList.add('workout-table__header--current-day');
-    if (lastDay !== null && lastDay !== undefined) {
-      lastDay.classList.remove('workout-table__header--current-day');
+    if (!this.workoutTable || !this.workoutTable.nativeElement) {
+      return;
     }
 
-    this.currentDay = filteredHeader[0];
+    const tableHeaders = Array.from(
+      this.workoutTable.nativeElement.querySelectorAll<HTMLDivElement>('.workout-table__header')
+    );
+    const lastDays = Array.from(
+      this.workoutTable.nativeElement.querySelectorAll<HTMLDivElement>(
+        '.workout-table__header--current-day'
+      )
+    );
+
+    lastDays.forEach((lastDay) => lastDay.classList.remove('workout-table__header--current-day'));
+
+    const filteredHeader = tableHeaders.filter((header) => header.dataset['day'] === currentDay);
+
+    filteredHeader.forEach((header) => {
+      header.classList.add('workout-table__header--current-day');
+    });
+
+    this.currentDay = filteredHeader;
   }
 }

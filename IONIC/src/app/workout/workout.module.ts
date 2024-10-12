@@ -8,13 +8,7 @@ import { WorkoutPage } from './workout.page';
 import { SharedModule } from '../shared/shared.module'; // Import SharedModule
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    WorkoutPageRoutingModule,
-    SharedModule,
-  ],
+  imports: [CommonModule, FormsModule, IonicModule, WorkoutPageRoutingModule, SharedModule],
   declarations: [WorkoutPage],
 })
 export class WorkoutPageModule {}

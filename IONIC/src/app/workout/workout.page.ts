@@ -1,21 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { WorkoutTableComponent } from '../workout-table/workout-table.component';
 
 @Component({
   selector: 'app-workout',
   templateUrl: './workout.page.html',
   styleUrls: ['./workout.page.scss'],
 })
-export class WorkoutPage implements OnInit {
+export class WorkoutPage {
+  @ViewChild(WorkoutTableComponent) workoutTableComponent: WorkoutTableComponent;
 
-  titleService?: Title;
-
-  constructor(titleService: Title) {
-    this.titleService = titleService;
+  constructor(private titleService: Title) {
+    this.titleService.setTitle('Home');
   }
 
-  ngOnInit() {
-    this.titleService.setTitle('Workout');
+  ionViewWillEnter() {
+    if (this.workoutTableComponent) {
+      this.workoutTableComponent.changeTableView();
+    }
   }
-
 }
