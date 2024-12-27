@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RisingSigma")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8b85ab967704af658f7adb408dcc0d86bbb92938")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c763b0dbf7de5ee67e11eab8d49cf1b511a290c7")]
 [assembly: System.Reflection.AssemblyProductAttribute("RisingSigma")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RisingSigma")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,5 +1,7 @@
-<app-header title="{{ 'SETTINGS.TITLE'|translate }}"></app-header>
+<app-header title="{{ 'ACCOUNT.TITLE'|translate }}"></app-header>
 
 <ion-content [fullscreen]="true">
   <ion-title>{{ 'ACCOUNT.SUBTITLE'|translate }}</ion-title>
+
+  <clerk-user-profile class="account"></clerk-user-profile>
 </ion-content>

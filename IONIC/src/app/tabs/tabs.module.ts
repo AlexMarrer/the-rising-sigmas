@@ -8,13 +8,7 @@ import { TabsPage } from './tabs.page';
 import { SharedModule } from '../shared/shared.module'; // Import SharedModule
 
 @NgModule({
-  imports: [
-    IonicModule,
-    CommonModule,
-    FormsModule,
-    TabsPageRoutingModule,
-    SharedModule,
-  ],
+  imports: [IonicModule, CommonModule, FormsModule, TabsPageRoutingModule, SharedModule],
   declarations: [TabsPage],
 })
 export class TabsPageModule {}

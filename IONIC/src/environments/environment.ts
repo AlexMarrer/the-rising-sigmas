@@ -3,7 +3,8 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  VITE_CLERK_PUBLISHABLE_KEY: 'pk_test_Z2xvd2luZy13cmVuLTQ0LmNsZXJrLmFjY291bnRzLmRldiQ',
 };
 
 /*

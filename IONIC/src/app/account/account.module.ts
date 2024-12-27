@@ -8,13 +8,7 @@ import { AccountPage } from './account.page';
 import { SharedModule } from '../shared/shared.module'; // Import SharedModule
 
 @NgModule({
-  imports: [
-    AccountPageRoutingModule,
-    CommonModule,
-    FormsModule,
-    IonicModule,
-    SharedModule,
-  ],
+  imports: [AccountPageRoutingModule, CommonModule, FormsModule, IonicModule, SharedModule],
   declarations: [AccountPage],
 })
 export class AccountPageModule {}
