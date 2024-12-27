@@ -86,7 +86,6 @@ Thumbs.db
 *.user
 *.v9.bin
 *.dtbcache.v2
-*.sln
 *.metadata.*
 *.projects.*
 
