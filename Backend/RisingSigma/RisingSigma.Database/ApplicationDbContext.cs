@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RisingSigma.Database.Entities;
 
-namespace RisingSigma.DataBase
+namespace RisingSigma.Database
 {
     public class ApplicationDbContext : DbContext
     {
@@ -11,6 +11,9 @@ namespace RisingSigma.DataBase
         }
 
         public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<TrainingPlan> TrainingPlan { get; set; }
+        public virtual DbSet<WeekPlan> WeekPlan { get; set; }
+
 
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -7,12 +7,10 @@ using System.Threading.Tasks;
 
 namespace RisingSigma.Database.Entities
 {
-    public class User
+    public class MuscleGroup
     {
         [Key]
         public Guid Id { get; set; }
-        public string Role { get; set; }
-
-        public List<TrainingPlan> Plan { get; set; }
+        public string Name { get; set; }
     }
 }
