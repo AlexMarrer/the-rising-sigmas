@@ -80,14 +80,22 @@ Thumbs.db
 *.mov
 *.wmv
 
-# Ignoriere alle Dateien in obj und darunterliegenden Verzeichnissen
-obj/
+# Visual Studio spezifisch
+.vs/
+*.suo
+*.user
+*.v9.bin
+*.dtbcache.v2
+*.sln
+*.metadata.*
+*.projects.*
 
-# Ignoriere spezifische .NET Build-Dateien
-*.dll
-*.pdb
-*.exe
+# Build-Artefakte
+/bin/
+/obj/
+/Debug/
+/Release/
 
-# Ignoriere Assembly-Info-Dateien
-AssemblyInfo.*
-
+# Node Modules
+node_modules/
+dist/
