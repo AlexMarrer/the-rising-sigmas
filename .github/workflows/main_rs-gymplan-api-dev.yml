@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy ASP.Net Core app to Azure Web App - rs-gymplan-api-dev
+name: Deploy API to Azure Web App - rs-gymplan-api-dev
 
 on:
   push:
@@ -10,56 +7,44 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      # 1. Code auschecken
+      - name: Check out code
+        uses: actions/checkout@v4
 
+      # 2. .NET Core Setup
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: "8.x"
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      # 3. Restore
+      - name: Restore dependencies
+        run: dotnet restore ./Backend/RisingSigma/RisingSigma.API/RisingSigma.API.csproj
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+      # 4. Build
+      - name: Build the project
+        run: dotnet build --configuration Release ./Backend/RisingSigma/RisingSigma.API/RisingSigma.API.csproj
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+      # 5. Publish
+      - name: Publish the app
+        run: dotnet publish -c Release -o ./publish ./Backend/RisingSigma/RisingSigma.API/RisingSigma.API.csproj
 
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
-
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: .net-app
-      
+      # 6. Azure Login
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C1E6820F768348448F1E391C95E48A79 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_96D42C4CB33743969BBE9FE1541A5E8F }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_4A7056F78DF4460581F216236AA88970 }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      # 7. Deployment
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'rs-gymplan-api-dev'
-          slot-name: 'Production'
-          package: .
-          
+          app-name: "rs-gymplan-api-dev"
+          slot-name: "Production"
+          package: ./publish
