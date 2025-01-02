@@ -33,11 +33,18 @@ jobs:
           cd IONIC
           npm run build
 
-      # 5. Deployment
+      # 5. **Azure Login** (neu bei v3 nötig)
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          # Hier muss dein Publish Profile rein
+          # (In den GitHub-Secrets hinterlegen: AZURE_WEB_PUBLISH_PROFILE)
+          publish-profile: ${{ secrets.AZURE_WEB_PUBLISH_PROFILE }}
+
+      # 6. Deployment
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: "rs-gymplan-web-dev"
-          publish-profile: ${{ secrets.AZURE_WEB_PUBLISH_PROFILE }}
           package: "IONIC/www"
