@@ -33,18 +33,11 @@ jobs:
           cd IONIC
           npm run build
 
-      # Debug: Verzeichnisinhalt anzeigen
-      - name: List directory contents
-        run: |
-          cd IONIC
-          dir
-          cd www
-          dir
-
       # 5. Deployment
       - name: Deploy to Azure Web App
+        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: "rs-gymplan-web-dev"
           publish-profile: ${{ secrets.AZURE_WEB_PUBLISH_PROFILE }}
-          package: ./IONIC/www
+          package: "IONIC/www"
