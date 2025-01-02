@@ -15,7 +15,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
-      # 2. Node.js Setup (Ionic benötigt Node.js)
+      # 2. Node.js Setup
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
@@ -33,10 +33,18 @@ jobs:
           cd IONIC
           npm run build
 
-      # 6. Deployment
+      # Debug: Verzeichnisinhalt anzeigen
+      - name: List directory contents
+        run: |
+          cd IONIC
+          dir
+          cd www
+          dir
+
+      # 5. Deployment
       - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3
         with:
-          app-name: "rs-gymplan-api-dev"
+          app-name: "rs-gymplan-web-dev"
           publish-profile: ${{ secrets.AZURE_WEB_PUBLISH_PROFILE }}
           package: ./IONIC/www
