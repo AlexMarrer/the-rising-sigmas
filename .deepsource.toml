@@ -1,0 +1,25 @@
+version = 1
+
+exclude_patterns = [
+  "IONIC/node_modules/**",
+  "IONIC/.angular/cache/**",
+  "IONIC/dist/**",
+  "IONIC/.bin/**",
+  "IONIC/.vscode/**",
+  "IONIC/android/**",
+  "IONIC/ios/**",
+  "IONIC/@clerk/localizations/**",
+  "RisingSigma/bin/**",
+  "RisingSigma/obj/**",
+  "RisingSigma/packages/**"
+]
+
+[[analyzers]]
+name = "csharp"
+
+[[analyzers]]
+name = "javascript"
+
+  [analyzers.meta]
+  plugins = ["angular"]
+  environment = ["nodejs"]
