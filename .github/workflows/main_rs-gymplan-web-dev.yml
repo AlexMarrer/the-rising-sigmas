@@ -9,11 +9,6 @@ on:
 jobs:
   build-and-deploy:
     runs-on: windows-latest
-    environment:
-      name: "Production"
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
 
     steps:
       # 1. Code auschecken
@@ -36,20 +31,10 @@ jobs:
           cd IONIC
           npm run build
 
-      # 5. Azure Login
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          auth-type: federated
-          client-id: ${{ secrets.AZURE_WEB_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_WEB_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
       # 6. Deployment
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: "rs-gymplan-api-dev"
           publish-profile: ${{ secrets.AZURE_WEB_PUBLISH_PROFILE }}
-          slot-name: "Production"
           package: ./publish
