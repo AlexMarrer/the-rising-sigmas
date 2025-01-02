@@ -33,10 +33,15 @@ jobs:
       - name: Publish the app
         run: dotnet publish -c Release -o ./publish ./Backend/RisingSigma/RisingSigma.API/RisingSigma.API.csproj
 
+      # 6. **Azure Login** (neu bei v3 nötig)
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          auth-type: "publishProfile"
+          publish-profile: ${{ secrets.AZURE_WEB_PUBLISH_PROFILE }}
+
       # 7. Deployment
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: "rs-gymplan-api-dev"
-          publish-profile: ${{ secrets.AZURE_API_PUBLISH_PROFILE }}
-          package: ./publish

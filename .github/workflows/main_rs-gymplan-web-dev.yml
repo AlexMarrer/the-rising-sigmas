@@ -35,10 +35,9 @@ jobs:
 
       # 5. **Azure Login** (neu bei v3 nötig)
       - name: Azure Login
-        uses: azure/login@v1
+        uses: azure/login@v2
         with:
-          # Hier muss dein Publish Profile rein
-          # (In den GitHub-Secrets hinterlegen: AZURE_WEB_PUBLISH_PROFILE)
+          auth-type: "publishProfile"
           publish-profile: ${{ secrets.AZURE_WEB_PUBLISH_PROFILE }}
 
       # 6. Deployment
