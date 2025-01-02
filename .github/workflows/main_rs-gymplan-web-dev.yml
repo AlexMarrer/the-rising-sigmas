@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       # 1. Code auschecken
@@ -27,7 +27,9 @@ jobs:
 
       # 4. Build erstellen
       - name: Build the app
-        run: npm run build
+        run: |
+          cd IONIC
+          npm run build
 
       # 5. Azure Login
       - name: Login to Azure
@@ -43,4 +45,4 @@ jobs:
         with:
           app-name: "rs-gymplan-web-dev"
           slot-name: "Production"
-          package: ./www
+          package: ./IONIC/www
