@@ -33,6 +33,12 @@ jobs:
       - name: Publish the app
         run: dotnet publish -c Release -o ./publish ./Backend/RisingSigma/RisingSigma.API/RisingSigma.API.csproj
 
+      # 6. Azure Login
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       # 7. Deployment
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
