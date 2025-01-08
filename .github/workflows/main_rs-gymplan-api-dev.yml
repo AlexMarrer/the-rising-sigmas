@@ -1,4 +1,7 @@
-name: Test Azure Login
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy ASP.Net Core app to Azure Web App - rs-gymplan-api-dev
 
 on:
   push:
@@ -7,20 +10,56 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-login:
+  build:
     runs-on: windows-latest
-    
+
     steps:
-    - name: Debug Secrets
-      run: |
-        echo "${{ secrets.TEST }}"
-        echo "Tenant ID: ${{ secrets.AZURE_TENANT_ID }}"
-        echo "Subscription ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}"
-    
-    - name: Azure Login
-      uses: azure/login@v2
-      with:
-          auth-type: IDENTITY
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
+
+      - name: dotnet publish
+        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write #This is required for requesting the JWT
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-app
+      
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_AE1CBC7773A344C48458937B411B032D }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_09601B297F7D4AD1B5B7025275A5E073 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_BA95811AFB87474B8EBC1BDFBF7390C2 }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'rs-gymplan-api-dev'
+          slot-name: 'Production'
+          package: .
+          
