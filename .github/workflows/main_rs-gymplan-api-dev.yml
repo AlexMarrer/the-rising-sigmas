@@ -9,6 +9,9 @@ on:
 jobs:
   test-login:
     runs-on: windows-latest
+    permissions:
+      id-token: write #This is required for requesting the JWT
+    
     steps:
     - name: Debug Secrets
       run: |
