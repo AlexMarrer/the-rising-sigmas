@@ -25,7 +25,7 @@ jobs:
       - name: Build the app
         run: |
           cd IONIC
-          npm run build
+          npm run build -- --configuration=production
 
       # Füge diesen Schritt hinzu
       - name: Upload build files
