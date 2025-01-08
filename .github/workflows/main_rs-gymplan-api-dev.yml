@@ -13,13 +13,13 @@ jobs:
     - name: Debug Secrets
       run: |
         echo "${{ secrets.TEST }}"
-        echo "Tenant ID: ${{ secrets.AZUREAPPSERVICE_TENANTID_2955729C4EA34D339EAAB018D66CE4D4 }}"
-        echo "Subscription ID: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_4A7056F78DF4460581F216236AA88970 }}"
+        echo "Tenant ID: ${{ secrets.AZURE_TENANT_ID }}"
+        echo "Subscription ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}"
     
     - name: Azure Login
       uses: azure/login@v2
       with:
         auth-type: IDENTITY
-        tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_2955729C4EA34D339EAAB018D66CE4D4 }}
-        subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_4A7056F78DF4460581F216236AA88970 }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         enable-AzPSSession: true
