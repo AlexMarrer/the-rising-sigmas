@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy ASP.Net Core app to Azure Web App - rs-gymplan-web-dev
+name: Build and deploy WEB
 
 on:
   push:
@@ -51,10 +51,15 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A5A6B4529E4E462D9FD04C6C60AAAAC2 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_479FB58E0AB04E67837847F20E6F3BCE }}
 
+      - name: tets
+        run: |
+          cd /IONIC
+          ls -l
+      # 6. Deployment
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: "rs-gymplan-web-dev"
-          package: "IONIC/www"
+          package: "/IONIC/www"
           
