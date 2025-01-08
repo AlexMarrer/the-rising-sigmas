@@ -12,5 +12,11 @@ namespace RisingSigma.API.Controllers
         {
             _logger = logger;
         }
+
+        [HttpGet]
+        public String GetHi()
+        {
+            return "Hi";
+        }
     }
 }
