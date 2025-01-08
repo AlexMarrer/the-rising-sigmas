@@ -8,9 +8,7 @@ on:
 
 jobs:
   test-login:
-    runs-on: windows-latest
-    permissions:
-      id-token: write #This is required for requesting the JWT
+    runs-on: self-hosted
     
     steps:
     - name: Debug Secrets
@@ -22,7 +20,7 @@ jobs:
     - name: Azure Login
       uses: azure/login@v2
       with:
-          auth-type: SERVICE_PRINCIPAL
+          auth-type: IDENTITY
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
