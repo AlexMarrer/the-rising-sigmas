@@ -12,8 +12,8 @@ jobs:
     steps:
     - name: Debug Secrets
       run: |
-        echo "Tenant ID: ${{ secrets.AZURE_TENANT_ID }}"
-        echo "Subscription ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+        echo ${{ secrets.AZURE_TENANT_ID }}
+        echo ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         
     - name: Azure Login
       uses: azure/login@v2
