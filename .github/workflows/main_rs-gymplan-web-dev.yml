@@ -14,25 +14,26 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      # 1. Code auschecken
+      - name: Check out code
+        uses: actions/checkout@v4
 
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
+      # 2. Node.js Setup
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          dotnet-version: '8.x'
+          node-version: "18.x"
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
-
-      - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
-
+      # 3. Abhängigkeiten installieren
+      - name: Install dependencies
+        run: |
+          cd IONIC
+          npm install
+      # 4. Build erstellen
+      - name: Build the app
+        run: |
+          cd IONIC
+          npm run build
   deploy:
     runs-on: windows-latest
     needs: build
@@ -43,11 +44,6 @@ jobs:
       id-token: write #This is required for requesting the JWT
 
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: .net-app
-      
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -59,7 +55,6 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'rs-gymplan-web-dev'
-          slot-name: 'Production'
-          package: .
+          app-name: "rs-gymplan-web-dev"
+          package: "IONIC/www"
           
