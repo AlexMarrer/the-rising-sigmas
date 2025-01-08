@@ -53,7 +53,6 @@ jobs:
 
       - name: tets
         run: |
-          cd IONIC
           ls -l
       # 6. Deployment
       - name: Deploy to Azure Web App
