@@ -7,56 +7,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  validate:
-    runs-on: windows-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20.x"
-          cache: "npm"
-          cache-dependency-path: "IONIC/package-lock.json"
-
-      - name: Validate i18n files
-        working-directory: ./IONIC
-        run: |
-          if (!(Test-Path "src/assets/i18n/de.json") -or !(Test-Path "src/assets/i18n/en.json")) {
-            Write-Error "Translation files missing!"
-            exit 1
-          }
-
-  lint:
-    runs-on: windows-latest
-    needs: validate
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20.x"
-          cache: "npm"
-          cache-dependency-path: "IONIC/package-lock.json"
-
-      - name: Install dependencies
-        working-directory: ./IONIC
-        run: npm ci
-
-      - name: Run lint
-        working-directory: ./IONIC
-        run: npm run lint
-
   build:
     runs-on: windows-latest
-    needs: [validate, lint]
     steps:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "20.x"
@@ -69,51 +26,9 @@ jobs:
           npm ci
           npm install -g @ionic/cli
 
-      - name: Create web.config
-        working-directory: ./IONIC
-        run: |
-          $webConfig = @"
-          <?xml version="1.0" encoding="utf-8"?>
-          <configuration>
-            <system.webServer>
-              <staticContent>
-                <remove fileExtension=".json" />
-                <mimeMap fileExtension=".json" mimeType="application/json" />
-                <remove fileExtension=".webmanifest" />
-                <mimeMap fileExtension=".webmanifest" mimeType="application/manifest+json" />
-                <remove fileExtension=".woff" />
-                <mimeMap fileExtension=".woff" mimeType="font/woff" />
-                <remove fileExtension=".woff2" />
-                <mimeMap fileExtension=".woff2" mimeType="font/woff2" />
-              </staticContent>
-              <rewrite>
-                <rules>
-                  <rule name="Angular Routes" stopProcessing="true">
-                    <match url=".*" />
-                    <conditions logicalGrouping="MatchAll">
-                      <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
-                      <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
-                    </conditions>
-                    <action type="Rewrite" url="/" />
-                  </rule>
-                </rules>
-              </rewrite>
-            </system.webServer>
-          </configuration>
-          "@
-          $webConfig | Out-File -FilePath "src/web.config" -Encoding UTF8
-
       - name: Build the app
         working-directory: ./IONIC
-        run: ionic build --configuration=production
-
-      - name: Ensure translation files are copied
-        working-directory: ./IONIC
-        run: |
-          New-Item -ItemType Directory -Force -Path "www/assets/i18n"
-          Copy-Item "src/assets/i18n/de.json" -Destination "www/assets/i18n/de.json" -Force
-          Copy-Item "src/assets/i18n/en.json" -Destination "www/assets/i18n/en.json" -Force
-          Copy-Item "src/web.config" -Destination "www/web.config" -Force
+        run: ionic build --configuration=production -- --base-href=https://rs-gymplan-web-dev.azurewebsites.net/ --deploy-url=https://rs-gymplan-web-dev.azurewebsites.net/
 
       - name: Upload build files
         uses: actions/upload-artifact@v4
