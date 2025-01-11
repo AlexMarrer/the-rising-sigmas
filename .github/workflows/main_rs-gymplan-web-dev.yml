@@ -15,19 +15,19 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18.x"
+          node-version: "20.x"  # LTS Version statt 18.x oder 23.x
 
       - name: Install dependencies
         run: |
           cd IONIC
           npm install
+          npm install -g @ionic/cli  # Ionic CLI global installieren
 
       - name: Build the app
         run: |
           cd IONIC
-          npm run build -- --configuration=production
+          ionic build --configuration=production
 
-      # Füge diesen Schritt hinzu
       - name: Upload build files
         uses: actions/upload-artifact@v4
         with:
@@ -45,15 +45,11 @@ jobs:
       id-token: write
 
     steps:
-      - name: Download build files  # Füge diesen Schritt hinzu
+      - name: Download build files
         uses: actions/download-artifact@v4
         with:
           name: ionic-build
           path: IONIC/www
-
-      - name: test
-        run: |
-          ls
 
       - name: Login to Azure
         uses: azure/login@v2
