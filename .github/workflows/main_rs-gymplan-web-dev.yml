@@ -40,8 +40,11 @@ jobs:
     runs-on: windows-latest
     needs: build
     environment:
-      name: "Production"
+      name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    
+    permissions:
+      id-token: write
 
     steps:
       - name: Download build files
@@ -50,17 +53,16 @@ jobs:
           name: ionic-build
           path: IONIC/www
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
-        id: deploy-to-webapp
-        with:
-          app-name: "rs-gymplan-web-dev"
-          package: "IONIC/www"
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-
       - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_B479A2E2ED4941A2BAE3C6063A6BAAC8 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A5A6B4529E4E462D9FD04C6C60AAAAC2 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_479FB58E0AB04E67837847F20E6F3BCE }}
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: "rs-gymplan-web-dev"
+          package: "IONIC/www"
