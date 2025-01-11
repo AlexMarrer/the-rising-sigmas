@@ -1,4 +1,5 @@
 name: Build and deploy WEB
+
 on:
   push:
     branches:
@@ -8,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -15,18 +17,26 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "20.x"  # LTS Version statt 18.x oder 23.x
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: 'IONIC/package-lock.json'
 
       - name: Install dependencies
+        working-directory: ./IONIC
         run: |
-          cd IONIC
-          npm install
-          npm install -g @ionic/cli  # Ionic CLI global installieren
+          npm ci
+          npm install -g @ionic/cli
+
+      - name: Create i18n files
+        working-directory: ./IONIC
+        run: |
+          mkdir -p src/assets/i18n
+          echo '{}' > src/assets/i18n/en.json
+          echo '{}' > src/assets/i18n/de.json
 
       - name: Build the app
-        run: |
-          cd IONIC
-          ionic build --configuration=production
+        working-directory: ./IONIC
+        run: ionic build --configuration=production
 
       - name: Upload build files
         uses: actions/upload-artifact@v4
@@ -40,7 +50,7 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
+
     permissions:
       id-token: write
 
