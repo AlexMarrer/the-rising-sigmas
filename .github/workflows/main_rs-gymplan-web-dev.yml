@@ -7,19 +7,61 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  validate:
     runs-on: windows-latest
-    
     steps:
       - name: Check out code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x'
-          cache: 'npm'
-          cache-dependency-path: 'IONIC/package-lock.json'
+          node-version: "20.x"
+          cache: "npm"
+          cache-dependency-path: "IONIC/package-lock.json"
+
+      - name: Validate i18n files
+        working-directory: ./IONIC
+        run: |
+          if (!(Test-Path "src/assets/i18n/de.json") -or !(Test-Path "src/assets/i18n/en.json")) {
+            Write-Error "Translation files missing!"
+            exit 1
+          }
+
+  lint:
+    runs-on: windows-latest
+    needs: validate
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20.x"
+          cache: "npm"
+          cache-dependency-path: "IONIC/package-lock.json"
+
+      - name: Install dependencies
+        working-directory: ./IONIC
+        run: npm ci
+
+      - name: Run lint
+        working-directory: ./IONIC
+        run: npm run lint
+
+  build:
+    runs-on: windows-latest
+    needs: [validate, lint]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20.x"
+          cache: "npm"
+          cache-dependency-path: "IONIC/package-lock.json"
 
       - name: Install dependencies
         working-directory: ./IONIC
@@ -27,23 +69,83 @@ jobs:
           npm ci
           npm install -g @ionic/cli
 
-      # Angepasst: Überprüfen und ggf. nur Dateien erstellen
-      - name: Ensure i18n files exist
+      - name: Create web.config
         working-directory: ./IONIC
         run: |
-          if (!(Test-Path "src/assets/i18n/en.json")) {
-            echo '{}' > src/assets/i18n/en.json
-          }
-          if (!(Test-Path "src/assets/i18n/de.json")) {
-            echo '{}' > src/assets/i18n/de.json
-          }
+          $webConfig = @"
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <system.webServer>
+              <staticContent>
+                <remove fileExtension=".json" />
+                <mimeMap fileExtension=".json" mimeType="application/json" />
+                <remove fileExtension=".webmanifest" />
+                <mimeMap fileExtension=".webmanifest" mimeType="application/manifest+json" />
+                <remove fileExtension=".woff" />
+                <mimeMap fileExtension=".woff" mimeType="font/woff" />
+                <remove fileExtension=".woff2" />
+                <mimeMap fileExtension=".woff2" mimeType="font/woff2" />
+              </staticContent>
+              <rewrite>
+                <rules>
+                  <rule name="Angular Routes" stopProcessing="true">
+                    <match url=".*" />
+                    <conditions logicalGrouping="MatchAll">
+                      <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
+                      <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+                    </conditions>
+                    <action type="Rewrite" url="/" />
+                  </rule>
+                </rules>
+              </rewrite>
+            </system.webServer>
+          </configuration>
+          "@
+          $webConfig | Out-File -FilePath "src/web.config" -Encoding UTF8
 
       - name: Build the app
         working-directory: ./IONIC
         run: ionic build --configuration=production
+
+      - name: Ensure translation files are copied
+        working-directory: ./IONIC
+        run: |
+          New-Item -ItemType Directory -Force -Path "www/assets/i18n"
+          Copy-Item "src/assets/i18n/de.json" -Destination "www/assets/i18n/de.json" -Force
+          Copy-Item "src/assets/i18n/en.json" -Destination "www/assets/i18n/en.json" -Force
+          Copy-Item "src/web.config" -Destination "www/web.config" -Force
 
       - name: Upload build files
         uses: actions/upload-artifact@v4
         with:
           name: ionic-build
           path: IONIC/www
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: "Production"
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+      - name: Download build files
+        uses: actions/download-artifact@v4
+        with:
+          name: ionic-build
+          path: IONIC/www
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        id: deploy-to-webapp
+        with:
+          app-name: "rs-gymplan-web-dev"
+          package: "IONIC/www"
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_B479A2E2ED4941A2BAE3C6063A6BAAC8 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A5A6B4529E4E462D9FD04C6C60AAAAC2 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_479FB58E0AB04E67837847F20E6F3BCE }}
