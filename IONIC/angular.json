@@ -35,7 +35,11 @@
                 "input": "src/assets/i18n",
                 "output": "assets/i18n"
               },
-              "src/web.config"
+              {
+                "glob": "web.config",
+                "input": "src",
+                "output": "/"
+              }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss"],
             "scripts": []
