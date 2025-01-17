@@ -1,6 +1,5 @@
-﻿namespace RisingSigma.Api.Logic
+﻿namespace RisingSigma.Api.Logic;
+
+public interface IVerificationLogic
 {
-    public interface IVerificationLogic
-    {
-    }
 }
