@@ -4,7 +4,7 @@ using RisingSigma.Api.Logic;
 namespace RisingSigma.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ExerciseController : ControllerBase
     {
         private readonly ILogger<ExerciseController> _logger;
