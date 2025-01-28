@@ -10,6 +10,7 @@ builder.Services.AddTransient<IVerificationLogic, VerificationLogic>();
 builder.Services.AddTransient<IExerciseLogic, ExerciseLogic>();
 
 builder.Services.AddControllers();
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
 var environmentName = builder.Environment.EnvironmentName;
@@ -29,11 +30,21 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseCors(
+    options => options
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials()
+        .SetIsOriginAllowed((host) => true)
+);
+
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
 
 //}
+app.UseRouting();
+
 
 app.UseSwagger();
 app.UseSwaggerUI();
