@@ -4,11 +4,12 @@ using RisingSigma.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add CORS service registration
+builder.Services.AddCors();
 
+// Add services to the container.
 builder.Services.AddTransient<IVerificationLogic, VerificationLogic>();
 builder.Services.AddTransient<IExerciseLogic, ExerciseLogic>();
-
 builder.Services.AddControllers();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
@@ -24,30 +25,27 @@ builder.Configuration
 builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseSqlServer("name=ConnectionStrings:Database"));
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseCors(
-    options => options
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials()
-        .SetIsOriginAllowed((host) => true)
+app.UseCors(options => options
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()
+    .SetIsOriginAllowed((host) => true)
 );
 
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-
-//}
 app.UseRouting();
 
-
 app.UseSwagger();
-app.UseSwaggerUI();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "RisingSigma API V1");
+    // Make Swagger UI the default page
+    c.RoutePrefix = string.Empty;
+});
 
 using (var scope = app.Services.CreateScope())
 {
@@ -56,7 +54,6 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
 app.MapControllers();
