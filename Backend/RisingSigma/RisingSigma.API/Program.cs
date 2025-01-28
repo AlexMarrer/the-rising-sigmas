@@ -43,8 +43,7 @@ app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "RisingSigma API V1");
-    // Make Swagger UI the default page
-    c.RoutePrefix = string.Empty;
+    c.RoutePrefix = "";
 });
 
 using (var scope = app.Services.CreateScope())
