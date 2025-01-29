@@ -20,10 +20,10 @@ The Training Plan App aims to simplify creating and managing workout plans, prov
 
 ## Features
 
-1. **Customizable Workout Plans**: Create, edit, and manage workout plans efficiently.
-2. **Responsive Design**: Works seamlessly across devices.
-3. **User Authentication**: Secure login and registration system.
-4. **Data Persistence**: Stores user plans in a structured and accessible manner.
+1. **Customizable Workout Plans**: Create, edit, and manage workout plans efficiently. :large_orange_diamond: *still in progress*
+2. **Responsive Design**: Works seamlessly across devices. :white_check_mark: **DONE**
+3. **User Authentication**: Secure login and registration system. :large_orange_diamond: *still in progress*
+4. **Data Persistence**: Stores user plans in a structured and accessible manner. :large_orange_diamond: *still in progress*
 
 ---
 
@@ -31,7 +31,7 @@ The Training Plan App aims to simplify creating and managing workout plans, prov
 
 ### Backend (C#)
 
-The backend provides APIs for managing user workout plans, and other core functionalities. 
+The backend provides APIs for managing user workout plans, and other core functionalities. :large_orange_diamond: *still in progress*
 
 #### Key Directories
 
