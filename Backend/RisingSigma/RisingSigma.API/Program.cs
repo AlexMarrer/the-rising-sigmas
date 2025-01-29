@@ -22,8 +22,19 @@ builder.Configuration
     .AddJsonFile($"appsettings.{environmentName}.json", true, true)
     .AddEnvironmentVariables();
 
-builder.Services.AddDbContext<ApplicationDbContext>(
-    options => options.UseSqlServer("name=ConnectionStrings:Database"));
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("Database"),
+        sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(15),
+                errorNumbersToAdd: null
+            );
+        }
+    )
+);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
