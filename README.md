@@ -31,7 +31,7 @@ The Training Plan App aims to simplify creating and managing workout plans, prov
 
 ### Backend (C#)
 
-The backend provides APIs for managing user authentication, workout plans, and other core functionalities.
+The backend provides APIs for managing user workout plans, and other core functionalities. 
 
 #### Key Directories
 
@@ -45,13 +45,11 @@ The backend provides APIs for managing user authentication, workout plans, and o
 ```
 Backend/
 ├── Controllers/
-│   ├── AuthenticationController.cs
 │   └── WorkoutPlanController.cs
 ├── Models/
 │   ├── User.cs
 │   └── WorkoutPlan.cs
 ├── Services/
-│   ├── AuthenticationService.cs
 │   └── WorkoutPlanService.cs
 └── Database/
        └── ApplicationDbContext.cs
