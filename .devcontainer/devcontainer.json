@@ -1,0 +1,23 @@
+{
+  "name": "Rising Sigmas Develop Environment",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "frontend",
+  "workspaceFolder": "/workspace",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp", // C# extension
+        "ms-mssql.mssql", // SQL Server extension
+        "angular.ng-template", // Angular extension
+        "ionic.ionic" // Ionic extension
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+
+  "forwardPorts": [5000, 4200, 8100, 1433],
+  "postCreateCommand": "echo 'Container is ready!'"
+}

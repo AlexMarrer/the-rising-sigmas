@@ -1,0 +1,33 @@
+version: "1.0"
+
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile.backend
+    volumes:
+      - ..:/workspace:cached
+    command: sleep infinity
+    networks:
+      - rising-sigmas-network
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile.frontend
+    volumes:
+      - ..:/workspace:cached
+    command: sleep infinity
+    networks:
+      - rising-sigmas-network
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Passwort12345
+    networks:
+      - rising-sigmas-network
+
+networks:
+  rising-sigmas-network:
