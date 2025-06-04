@@ -33,10 +33,6 @@ RUN npm install -g @angular/cli@latest
 # Generate dev certificate for HTTPS
 RUN dotnet dev-certs https --trust
 
-# Download Adminer
-RUN mkdir -p /opt/adminer \
-    && curl -L https://github.com/vrana/adminer/releases/download/v4.8.1/adminer-4.8.1.php -o /opt/adminer/adminer.php
-
 # Set PATH for dotnet tools
 ENV PATH="${PATH}:/root/.dotnet/tools"
 

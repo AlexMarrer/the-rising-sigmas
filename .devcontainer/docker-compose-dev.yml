@@ -20,10 +20,9 @@ services:
       - "5000:5000"
       - "5001:5001"
       - "8100:8100"
-      - "8090:8090"
     depends_on:
-      database:
-        condition: service_healthy
+      - database
+      - adminer
     networks:
       - rising-sigmas-network
 
@@ -45,6 +44,21 @@ services:
       start_period: 60s
     volumes:
       - mssqldata:/var/opt/mssql
+    networks:
+      - rising-sigmas-network
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    environment:
+      - ADMINER_DEFAULT_SERVER=database
+      - ADMINER_DEFAULT_DB=RisingSigma
+      - ADMINER_DESIGN=pepa-linha
+    ports:
+      - "8090:8080"
+    depends_on:
+      database:
+        condition: service_healthy
     networks:
       - rising-sigmas-network
 

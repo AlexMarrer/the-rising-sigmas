@@ -24,6 +24,6 @@
   },
 
   "forwardPorts": [5000, 5001, 4200, 8100, 1433, 8090],
-  "postCreateCommand": "cd /workspace/IONIC && npm install && /workspace/.devcontainer/scripts/start-adminer.sh",
+  "postCreateCommand": "cd /workspace/IONIC && npm install",
   "remoteUser": "root"
 }
