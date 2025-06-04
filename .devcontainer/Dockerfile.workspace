@@ -1,0 +1,47 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+
+# Install Node.js 20.x
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
+
+# Install PHP for Adminer
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get install -y --no-install-recommends \
+        git \
+        curl \
+        unzip \
+        procps \
+        wget \
+        ca-certificates \
+        vim \
+        php \
+        php-cli \
+        php-pgsql \
+        php-mysql \
+        php-sqlite3 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install dotnet tools
+RUN dotnet tool install -g dotnet-ef
+RUN dotnet tool install -g dotnet-aspnet-codegenerator
+
+# Install global npm packages
+RUN npm install -g @ionic/cli@latest
+RUN npm install -g @angular/cli@latest
+
+# Generate dev certificate for HTTPS
+RUN dotnet dev-certs https --trust
+
+# Download Adminer
+RUN mkdir -p /opt/adminer \
+    && curl -L https://github.com/vrana/adminer/releases/download/v4.8.1/adminer-4.8.1.php -o /opt/adminer/adminer.php
+
+# Set PATH for dotnet tools
+ENV PATH="${PATH}:/root/.dotnet/tools"
+
+# Copy scripts
+COPY .devcontainer/scripts/ /workspace/.devcontainer/scripts/
+RUN chmod +x /workspace/.devcontainer/scripts/*.sh
+
+WORKDIR /workspace
