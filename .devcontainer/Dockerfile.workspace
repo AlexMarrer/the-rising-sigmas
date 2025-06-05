@@ -36,8 +36,4 @@ RUN dotnet dev-certs https --trust
 # Set PATH for dotnet tools
 ENV PATH="${PATH}:/root/.dotnet/tools"
 
-# Copy scripts
-COPY .devcontainer/scripts/ /workspace/.devcontainer/scripts/
-RUN chmod +x /workspace/.devcontainer/scripts/*.sh
-
 WORKDIR /workspace
