@@ -1,0 +1,31 @@
+{
+  "version": "2.0.0",
+  "configurations": [
+    {
+      "name": ".NET Core Launch (web)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/Backend/RisingSigma/RisingSigma.API/bin/Debug/net8.0/RisingSigma.Api.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/Backend/RisingSigma/RisingSigma.API",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "https://0.0.0.0:5001;http://0.0.0.0:5000"
+      },
+      "sourceFileMap": {
+        "/Views": "${workspaceFolder}/Views"
+      }
+    },
+    {
+      "name": ".NET Core Attach",
+      "type": "coreclr",
+      "request": "attach"
+    }
+  ]
+}

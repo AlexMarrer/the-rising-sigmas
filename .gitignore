@@ -7,9 +7,18 @@
 
 # Visual Studio
 .vs/
-.vscode/
 /CI/tools/*
 !/CI/tools/packages.config
+
+# VS Code - only ignore personal settings
+.vscode/settings.json
+.vscode/.ropeproject/
+
+# Keep these VS Code files:
+# .vscode/tasks.json
+# .vscode/launch.json
+# .vscode/extensions.json
+# .vscode/workspace.json
 
 # User-specific files
 *.suo
