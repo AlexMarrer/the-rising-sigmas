@@ -1,64 +1,32 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0
- 
-# Set environment variables
+FROM mcr.microsoft.com/mssql/server:2022-latest
 
-ENV DEBIAN_FRONTEND=noninteractive
+ENV ACCEPT_EULA=Y \
+    DEBIAN_FRONTEND=noninteractive \
+    PATH="$PATH:/opt/mssql-tools/bin"
 
-ENV PATH="${PATH}:/root/.dotnet/tools"
- 
-# Install Node.js 20.x, PHP, and other dependencies in a single layer
+USER root
 
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-&& apt-get update \
-&& apt-get install -y --no-install-recommends \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends\
+    curl \
+    apt-transport-https \
+    gnupg2 \
+    unixodbc-dev \
+    ca-certificates\
+    && curl -fsSL https://packages.microsoft.com/keys/microsoft.asc \
+    | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg \
+    && echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/ubuntu/22.04/prod jammy main" \
+    > /etc/apt/sources.list.d/mssql-tools.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+    mssql-tools18 \
+    mssql-tools \
+    msodbcsql18 \
+    msodbcsql17 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /tmp/* \
+    && rm -rf /var/tmp/*
 
-        nodejs \
 
-        git \
-
-        curl \
-
-        unzip \
-
-        procps \
-
-        wget \
-
-        ca-certificates \
-
-        vim \
-
-        php \
-
-        php-cli \
-
-        php-pgsql \
-
-        php-mysql \
-
-        php-sqlite3 \
-&& apt-get clean \
-&& rm -rf /var/lib/apt/lists/*
- 
-# Install dotnet tools, npm packages, and generate dev certificate
-
-RUN dotnet tool install -g dotnet-ef \
-&& dotnet tool install -g dotnet-aspnet-codegenerator \
-&& npm install -g @ionic/cli@7.2.0 \
-&& npm install -g @angular/cli@18.0.7 \
-&& npm install -g nodemon@3.1.7 \
-&& npm install -g npm-run-all@4.1.5 \
-&& (dotnet dev-certs https --trust || true)
- 
-# Set working directory
-
-WORKDIR /workspace
- 
-# Add labels for better documentation
-
-LABEL description="Development container for Ionic/Angular 18 + .NET 8 with Node.js 20, PHP and development tools"
-
-LABEL maintainer="Sigmas"
-
-LABEL version="1.0.0"
- 
+USER mssql
