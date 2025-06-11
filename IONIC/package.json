@@ -6,7 +6,7 @@
   "scripts": {
     "ng": "ng",
     "start": "npm-run-all --parallel serve watch:scss",
-    "serve": "ng serve",
+    "serve": "ng serve --host 0.0.0.0 --port 4200",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",

@@ -1,0 +1,29 @@
+{
+  "name": "Rising Sigmas Full-Stack Development",
+  "dockerComposeFile": "docker-compose-dev.yml",
+  "service": "workspace",
+  "workspaceFolder": "/workspace",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.csdevkit",
+        "ms-mssql.mssql",
+        "angular.ng-template",
+        "ionic.ionic",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "bradlc.vscode-tailwindcss"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "dotnet.defaultSolution": "/workspace/Backend/RisingSigma/RisingSigma.sln"
+      }
+    }
+  },
+
+  "forwardPorts": [5000, 5001, 4200, 8100, 1433, 8090],
+  "postCreateCommand": "cd /workspace/IONIC && npm install",
+  "remoteUser": "root"
+}
