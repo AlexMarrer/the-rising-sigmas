@@ -1,11 +1,9 @@
-version: "3.8"
-
 services:
   # SQL Server
   database:
     build:
       context: ./db
-    image: the-rising-sigmas-database
+    image: ${DOCKER_HUB_USER}/rs-database:latest
     container_name: rs-database
     environment:
       ACCEPT_EULA: "Y"
@@ -23,6 +21,7 @@ services:
       - rs-network
     volumes:
       - db-data:/var/opt/mssql
+    restart: unless-stopped
 
   # Backend Docker Hub
   backend:
@@ -38,6 +37,7 @@ services:
         condition: service_healthy
     networks:
       - rs-network
+    restart: unless-stopped
 
   # Frontend Docker Hub
   frontend:
@@ -46,11 +46,19 @@ services:
     ports:
       - "8080:80"
     environment:
-      - API_URL=http://localhost:5000
+      - API_URL=http://backend:80
     depends_on:
       - backend
     networks:
       - rs-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
   adminer:
     image: adminer:latest
     container_name: rs-adminer
@@ -64,6 +72,7 @@ services:
         condition: service_healthy
     networks:
       - rs-network
+    restart: unless-stopped
 
 volumes:
   db-data:
