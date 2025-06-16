@@ -14,18 +14,24 @@ RUN dotnet build "RisingSigma.Api.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "RisingSigma.Api.csproj" -c Release -o /app/publish
 
-RUN dotnet tool install --global dotnet-ef
+RUN dotnet tool install --global dotnet-ef --version 8.0.*
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
+
+# Non-root User
+RUN adduser --disabled-password --gecos '' appuser \
+    && chown -R appuser:appuser /app
+
+ENV PATH="${PATH}:/home/appuser/.dotnet/tools" \
+    DOTNET_ENVIRONMENT=Production \
+    ASPNETCORE_URLS=http://+:80
+
+# Only copy the necessary files from the publish stage
+COPY --from=publish --chown=appuser:appuser /app/publish .
+COPY --from=publish --chown=appuser:appuser /root/.dotnet/tools /home/appuser/.dotnet/tools
+
+USER appuser
 EXPOSE 80
-
-# Set the PATH to include the copied tools
-ENV PATH="${PATH}:/root/.dotnet/tools"
-
-# Copy the published application from the 'publish' stage
-COPY --from=publish /app/publish .
-# Copy the installed dotnet-ef tool from the 'publish' stage
-COPY --from=publish /root/.dotnet/tools /root/.dotnet/tools
 
 ENTRYPOINT ["dotnet", "RisingSigma.Api.dll"]
