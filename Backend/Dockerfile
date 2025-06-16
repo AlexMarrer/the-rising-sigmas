@@ -27,11 +27,12 @@ ENV PATH="${PATH}:/home/appuser/.dotnet/tools" \
     DOTNET_ENVIRONMENT=Production \
     ASPNETCORE_URLS=http://+:80
 
-# Only copy the necessary files from the publish stage
-COPY --from=publish --chown=appuser:appuser /app/publish .
-COPY --from=publish --chown=appuser:appuser /root/.dotnet/tools /home/appuser/.dotnet/tools
-
 USER appuser
+
+# Only copy the necessary files from the publish stage
+COPY --from=publish /app/publish .
+COPY --from=publish /root/.dotnet/tools /home/appuser/.dotnet/tools
+
 EXPOSE 80
 
 ENTRYPOINT ["dotnet", "RisingSigma.Api.dll"]
