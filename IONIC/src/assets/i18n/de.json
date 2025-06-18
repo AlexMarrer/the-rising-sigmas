@@ -13,7 +13,8 @@
   },
   "SETTINGS": {
     "TITLE": "Einstellungen",
-    "SUBTITLE": "Das ist die Einstellungsseite"
+    "SUBTITLE": "Das ist die Einstellungsseite",
+    "CLEAR_DATA": "Daten löschen"
   },
   "ACCOUNT": {
     "TITLE": "Konto",
