@@ -3,7 +3,7 @@
 
 /* width */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 0.625rem;
 }
 
 /* Track */
@@ -32,35 +32,45 @@
   &__table {
     display: flex;
     grid-area: main;
-    justify-content: space-evenly;
+    width: 100%;
     overflow: hidden;
     border: 1px solid map.get(variables.$color-map, "primary");
-    border-radius: 20px;
+    border-radius: 1.25rem;
   }
 
   &__column {
     display: none;
-    flex: 1;
+    flex: 1 1 0;
+    min-width: 5rem;
     border-right: 1px solid map.get(variables.$color-map, "primary");
+
+    &--has-events {
+      flex: 2 1 0;
+      min-width: 7.5rem;
+    }
 
     &:last-child {
       border-right: unset;
     }
 
     &--active {
-      display: block;
+      display: flex;
+      flex-direction: column;
     }
   }
 
   &__header {
     width: 100%;
-    min-width: 6rem;
-    padding: 0.5rem 0;
+    padding: 0.5rem;
+    overflow: hidden;
     border-bottom: 1px solid map.get(variables.$color-map, "primary");
+    font-size: 0.85rem;
     text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     &--current-day {
-      background-color: rgba(map.get(variables.$color-map, "primary"), 0.5);
+      background-color: rgba(map.get(variables.$color-map, "primary"), 50%);
       color: map.get(variables.$color-map, "white");
     }
   }
@@ -84,7 +94,60 @@
     width: clamp(6rem, 6rem + 5vw, 10rem);
     height: min-content;
     padding: 0;
-    border-radius: 10px;
+  }
+
+  &__event-list {
+    width: 100%;
+    min-height: 12.5rem;
+    padding: 0.5rem;
+  }
+
+  &__event {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 3.125rem;
+    max-height: 6.25rem;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    overflow: hidden;
+    border: 1px solid rgba(map.get(variables.$color-map, "primary"), 30%);
+    border-radius: 0.5rem;
+    background-color: rgba(map.get(variables.$color-map, "primary"), 10%);
+    font-size: 0.9rem;
+    text-overflow: ellipsis;
+    word-break: break-word;
+    white-space: nowrap;
+    cursor: move;
+
+    &:hover {
+      background-color: rgba(map.get(variables.$color-map, "primary"), 30%);
+    }
+
+    &:active {
+      background-color: rgba(map.get(variables.$color-map, "primary"), 60%);
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    // CDK Drag & Drop Styles
+    &.cdk-drag-preview {
+      box-sizing: border-box;
+      border-radius: 0.5rem;
+      box-shadow: 0 5px 5px -3px rgb(0 0 0 / 20%), 0 8px 10px 1px rgb(0 0 0 / 14%),
+        0 3px 14px 2px rgb(0 0 0 / 12%);
+    }
+
+    &.cdk-drag-placeholder {
+      opacity: 0.5;
+      background: rgba(map.get(variables.$color-map, "primary"), 5%);
+    }
+  }
+
+  &__event-list.cdk-drop-list-dragging &__event:not(.cdk-drag-placeholder) {
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
   }
 }
 

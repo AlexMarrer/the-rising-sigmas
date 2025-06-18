@@ -1,5 +1,9 @@
-<app-header title="{{ 'SETTINGS.TITLE'|translate }}"></app-header>
+<app-header title="{{ 'SETTINGS.TITLE' | translate }}"></app-header>
 
 <ion-content [fullscreen]="true">
-  <ion-title>{{ 'SETTINGS.SUBTITLE'|translate }}</ion-title>
+  <ion-title>{{ 'SETTINGS.SUBTITLE' | translate }}</ion-title>
+
+  <ion-button (click)="clearData()">
+    {{ 'SETTINGS.CLEAR_DATA' | translate }}
+  </ion-button>
 </ion-content>
