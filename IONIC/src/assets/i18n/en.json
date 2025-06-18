@@ -13,7 +13,8 @@
   },
   "SETTINGS": {
     "TITLE": "Settings",
-    "SUBTITLE": "This is the settings page"
+    "SUBTITLE": "This is the settings page",
+    "CLEAR_DATA": "Clear Data"
   },
   "ACCOUNT": {
     "TITLE": "Account",

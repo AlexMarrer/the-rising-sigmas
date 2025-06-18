@@ -1,12 +1,15 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0
 
-# Install Node.js 20.x
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs
+# Environment
+ENV DEBIAN_FRONTEND=noninteractive \
+    PATH="${PATH}:/root/.dotnet/tools" \
+    NODE_ENV=development
 
-# Install PHP for Adminer
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+# Install Node.js 20.x, PHP, and other dependencies in a single layer
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get update \
     && apt-get install -y --no-install-recommends \
+        nodejs \
         git \
         curl \
         unzip \
@@ -14,26 +17,26 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         wget \
         ca-certificates \
         vim \
-        php \
-        php-cli \
-        php-pgsql \
-        php-mysql \
-        php-sqlite3 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install dotnet tools
-RUN dotnet tool install -g dotnet-ef
-RUN dotnet tool install -g dotnet-aspnet-codegenerator
+# .NET Tools
+RUN dotnet tool install -g dotnet-ef \
+    && dotnet tool install -g dotnet-aspnet-codegenerator \
+    && dotnet tool install -g dotnet-watch \
+    && dotnet dev-certs https --trust
 
-# Install global npm packages
-RUN npm install -g @ionic/cli@latest
-RUN npm install -g @angular/cli@latest
-
-# Generate dev certificate for HTTPS
-RUN dotnet dev-certs https --trust
-
-# Set PATH for dotnet tools
-ENV PATH="${PATH}:/root/.dotnet/tools"
+# NPM Tools
+RUN npm install -g \
+        @ionic/cli@7.2.0 \
+        @angular/cli@18.0.7 \
+        nodemon@3.1.7 \
+        npm-run-all@4.1.5 \
+        typescript@5.4.5 \
+    && npm cache clean --force
 
 WORKDIR /workspace
+
+LABEL description="Development container for Ionic/Angular 18 + .NET 8 with Node.js 20, PHP and development tools"
+LABEL maintainer="Sigmas"
+LABEL version="1.1.0"
