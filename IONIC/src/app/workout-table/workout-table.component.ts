@@ -1,28 +1,38 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { IonButton } from '@ionic/angular';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-workout-table',
   templateUrl: './workout-table.component.html',
   styleUrls: ['./workout-table.component.scss'],
 })
-export class WorkoutTableComponent implements AfterViewInit {
-  // ViewChild is a decorator that configures a view query. The change detection system looks for the first element or the directive matching the selector in the view DOM.
-  // If the view DOM changes, and a new child matches the selector, the property is updated.
+export class WorkoutTableComponent implements AfterViewInit, OnDestroy {
   @ViewChild('addButton', { static: false }) button: IonButton;
   @ViewChild('workoutTable', { static: false }) workoutTable: ElementRef<HTMLDivElement>;
 
   private currentDay: HTMLDivElement[] = [];
   private currentDayIndex: number;
-  private days: string[] = [
-    'sunday',
+  public days: string[] = [
     'monday',
     'tuesday',
     'wednesday',
     'thursday',
     'friday',
     'saturday',
+    'sunday',
   ];
+
+  public events: { [key: string]: string[] } = {
+    monday: [],
+    tuesday: [],
+    wednesday: [],
+    thursday: [],
+    friday: [],
+    saturday: [],
+    sunday: [],
+  };
+
   private intervalId: any;
   public requestedView: string;
 
@@ -33,11 +43,21 @@ export class WorkoutTableComponent implements AfterViewInit {
   }
 
   onButtonClick(): void {
-    console.log('Button clicked');
-    const div = document.createElement('div');
-    div.innerHTML = 'Hello World';
-    if (this.workoutTable && this.workoutTable.nativeElement) {
-      this.workoutTable.nativeElement.appendChild(div);
+    const defaultDay = this.days[0];
+    this.events[defaultDay].push(`Event ${Date.now()}`);
+  }
+
+  // deepcode ignore JS-0105: Event handler method must be instance method for Angular template binding
+  drop(event: CdkDragDrop<string[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
     }
   }
 
@@ -128,5 +148,12 @@ export class WorkoutTableComponent implements AfterViewInit {
     });
 
     this.currentDay = filteredHeader;
+  }
+
+  ngOnDestroy(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
   }
 }
