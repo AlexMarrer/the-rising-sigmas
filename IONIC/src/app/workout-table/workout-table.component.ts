@@ -47,6 +47,7 @@ export class WorkoutTableComponent implements AfterViewInit {
     this.events[defaultDay].push(`Event ${Date.now()}`);
   }
 
+  // deepcode ignore JS-0105: Event handler method must be instance method for Angular template binding
   drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
