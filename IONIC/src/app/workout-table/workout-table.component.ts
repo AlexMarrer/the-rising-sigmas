@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { IonButton } from '@ionic/angular';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 
@@ -7,7 +7,7 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/dr
   templateUrl: './workout-table.component.html',
   styleUrls: ['./workout-table.component.scss'],
 })
-export class WorkoutTableComponent implements AfterViewInit {
+export class WorkoutTableComponent implements AfterViewInit, OnDestroy {
   @ViewChild('addButton', { static: false }) button: IonButton;
   @ViewChild('workoutTable', { static: false }) workoutTable: ElementRef<HTMLDivElement>;
 
@@ -148,5 +148,12 @@ export class WorkoutTableComponent implements AfterViewInit {
     });
 
     this.currentDay = filteredHeader;
+  }
+
+  ngOnDestroy(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
   }
 }
