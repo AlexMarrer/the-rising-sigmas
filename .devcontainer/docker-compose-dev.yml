@@ -39,7 +39,8 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-        labels: "service=workspace"
+        labels:
+          service: workspace
 
   database:
     build:
