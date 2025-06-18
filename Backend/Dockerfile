@@ -30,8 +30,8 @@ ENV PATH="${PATH}:/home/appuser/.dotnet/tools" \
 USER appuser
 
 # Only copy the necessary files from the publish stage
-COPY --from=publish /app/publish .
-COPY --from=publish /root/.dotnet/tools /home/appuser/.dotnet/tools
+COPY --chown=appuser:appuser --from=publish /app/publish .
+COPY --chown=appuser:appuser --from=publish /root/.dotnet/tools /home/appuser/.dotnet/tools
 
 EXPOSE 80
 
