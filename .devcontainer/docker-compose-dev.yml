@@ -7,7 +7,9 @@ services:
       dockerfile: .devcontainer/Dockerfile.workspace
     volumes:
       - ..:/workspace:cached
-      - node_modules:/workspace/IONIC/node_modules
+      - node_modules:/workspace/IONIC/node_modules:delegated
+      - dotnet_packages:/home/vscode/.nuget/packages:delegated
+      - workspace_extensions:/home/vscode/.vscode-server/extensions:cached
     working_dir: /workspace
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -20,11 +22,25 @@ services:
       - "5000:5000"
       - "5001:5001"
       - "8100:8100"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     depends_on:
-      - database
-      - adminer
+      database:
+        condition: service_healthy
     networks:
       - rising-sigmas-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels:
+          service: workspace
 
   database:
     build:
@@ -46,6 +62,13 @@ services:
       - mssqldata:/var/opt/mssql
     networks:
       - rising-sigmas-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
+        labels: "service=database"
 
   adminer:
     image: adminer
@@ -68,4 +91,14 @@ networks:
 
 volumes:
   mssqldata:
+    name: rs-dev-database
+    driver: local
   node_modules:
+    name: rs-dev-node-modules
+    driver: local
+  dotnet_packages:
+    name: rs-dev-dotnet-packages
+    driver: local
+  workspace_extensions:
+    name: rs-dev-vscode-extensions
+    driver: local
