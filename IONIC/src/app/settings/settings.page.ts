@@ -8,14 +8,14 @@ import { Title } from '@angular/platform-browser';
 })
 export class SettingsPage implements OnInit {
 
-  titleService?: Title;
-
-  constructor(titleService: Title) {
-    this.titleService = titleService;
-  }
+  constructor(private titleService: Title) {}
 
   ngOnInit() {
     this.titleService.setTitle('Settings');
   }
 
+  clearData() {
+    localStorage.clear(); 
+    window.location.href = 'index.html';
+  }
 }
