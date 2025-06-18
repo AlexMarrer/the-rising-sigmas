@@ -242,6 +242,33 @@ The development environment includes:
    dotnet ef database update --project RisingSigma.Database --startup-project RisingSigma.API
    ```
 
+4. **Database Management with SQL Server Extension**
+
+   The dev container includes the **MS SQL Server Extension** (`ms-mssql.mssql`) for direct database access within VS Code.
+
+   **Setting up the connection:**
+
+   1. Open the **SQL Server** panel in VS Code sidebar
+   2. Click **"Add Connection"**
+   3. Enter connection details:
+      - **Server**: `localhost` (or `database` from within container)
+      - **Port**: `1433`
+      - **Authentication**: `SQL Login`
+      - **Username**: `sa`
+      - **Password**: Your `DB_PASSWORD` from `.env` file
+      - **Database**: `RisingSigma`
+
+   **Features available:**
+
+   - Browse and view database tables
+   - Execute SQL queries directly in VS Code
+   - Explore database schema and relationships
+   - IntelliSense support for SQL queries
+   - View query results in integrated panels
+   - Manage stored procedures and functions
+
+   **Alternative**: Use Adminer web interface at http://localhost:8090
+
 ## Available VS Code Tasks
 
 The project includes pre-configured VS Code tasks:
