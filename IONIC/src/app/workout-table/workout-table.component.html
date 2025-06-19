@@ -21,11 +21,16 @@
   </ion-list>
   <div #workoutTable class="workout-table__table">
     <div
-      class="workout-table__column workout-table__column--active"
+      class="workout-table__column"
+      [class.workout-table__column--active]="isCurrentDay(day)"
       [class.workout-table__column--has-events]="events[day].length > 0"
       *ngFor="let day of days"
     >
-      <div class="workout-table__header" [attr.data-day]="day">
+      <div
+        class="workout-table__header"
+        [class.workout-table__header--current-day]="isCurrentDay(day)"
+        [attr.data-day]="day"
+      >
         {{ "WORKOUT-TABLE." + day.toUpperCase() | translate }}
       </div>
       <div
@@ -37,7 +42,7 @@
         (cdkDropListDropped)="drop($event)"
       >
         <div class="workout-table__event" *ngFor="let event of events[day]" cdkDrag>
-          {{ event }}
+          {{ getExerciseDisplayText(event) }}
         </div>
       </div>
     </div>
