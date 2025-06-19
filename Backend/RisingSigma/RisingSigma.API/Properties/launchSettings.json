@@ -5,21 +5,11 @@
     "anonymousAuthentication": true,
     "iisExpress": {
       "applicationUrl": "http://localhost:48956",
-      "sslPort": 44379
+      "sslPort": 0
     }
   },
   "profiles": {
-    "http": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "http://0.0.0.0:5000",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    "https": {
+    "RisingSigma.Api": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

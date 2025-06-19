@@ -13,8 +13,7 @@
         "angular.ng-template",
         "ionic.ionic",
         "esbenp.prettier-vscode",
-        "dbaeumer.vscode-eslint",
-        "bradlc.vscode-tailwindcss"
+        "dbaeumer.vscode-eslint"
       ],
       "settings": {
         "terminal.integrated.defaultProfile.linux": "bash",
@@ -23,7 +22,7 @@
     }
   },
 
-  "forwardPorts": [5000, 5001, 4200, 8100, 1433, 8090],
+  "forwardPorts": [5000, 4200, 8100, 1433, 8090],
   "postCreateCommand": "cd /workspace/IONIC && npm install",
   "remoteUser": "root"
 }
