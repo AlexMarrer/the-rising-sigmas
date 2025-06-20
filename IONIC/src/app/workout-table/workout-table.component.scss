@@ -121,7 +121,7 @@
       align-items: center;
       justify-content: center;
       min-height: 12.5rem;
-      border: 2px dashed rgba(map.get(variables.$color-map, "primary"), 20%);
+      border: 0.125rem dashed rgba(map.get(variables.$color-map, "primary"), 20%);
       border-radius: 0.5rem;
 
       &::after {
@@ -177,8 +177,8 @@
     &.cdk-drag-preview {
       box-sizing: border-box;
       border-radius: 0.5rem;
-      box-shadow: 0 5px 5px -3px rgb(0 0 0 / 20%), 0 8px 10px 1px rgb(0 0 0 / 14%),
-        0 3px 14px 2px rgb(0 0 0 / 12%);
+      box-shadow: 0 0.3125rem 0.3125rem -0.1875rem rgb(0 0 0 / 20%),
+        0 0.5rem 0.625rem 0.0625rem rgb(0 0 0 / 14%), 0 0.1875rem 0.875rem 0.125rem rgb(0 0 0 / 12%);
     }
 
     &.cdk-drag-placeholder {
