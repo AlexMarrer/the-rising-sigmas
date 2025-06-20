@@ -95,12 +95,15 @@ export class ExerciseService {
   createMuscleGroup(request: CreateMuscleGroupRequest): Observable<MuscleGroup> {
     return this.http.post<MuscleGroup>(`${this.baseUrl}/exercise/musclegroups`, request);
   }
-
   updateExercise(id: string, request: UpdateExerciseRequest): Observable<Exercise> {
     return this.http.put<Exercise>(`${this.baseUrl}/exercise/${id}`, request);
   }
 
   seedData(): Observable<any> {
     return this.http.post(`${this.baseUrl}/exercise/seed-data`, {});
+  }
+
+  clearAllTrainingData(): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/exercise/clear-all-data`);
   }
 }

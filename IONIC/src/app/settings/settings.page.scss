@@ -1,1 +1,30 @@
-// eslint-ignore-line
+.settings {
+  &__section {
+    margin: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    background: var(--ion-color-light);
+  }
+
+  &__section-title {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--ion-color-dark);
+    font-weight: 600;
+  }
+
+  &__button {
+    margin-bottom: 0.5rem;
+  }
+
+  &__description {
+    margin-top: 0.5rem;
+    color: var(--ion-color-medium);
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  &__warning {
+    color: var(--ion-color-danger);
+  }
+}

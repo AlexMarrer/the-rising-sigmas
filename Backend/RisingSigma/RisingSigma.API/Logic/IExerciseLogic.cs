@@ -3,8 +3,7 @@
 namespace RisingSigma.Api.Logic;
 
 public interface IExerciseLogic
-{
-    Task<IEnumerable<ExerciseDto>> GetAllExercisesAsync();
+{    Task<IEnumerable<ExerciseDto>> GetAllExercisesAsync();
     Task<IEnumerable<ExerciseTemplateDto>> GetAllExerciseTemplatesAsync();
     Task<IEnumerable<MuscleGroupDto>> GetAllMuscleGroupsAsync();
     Task<CreateExerciseResponseDto> CreateExerciseAsync(CreateExerciseRequestDto request);
@@ -12,4 +11,5 @@ public interface IExerciseLogic
     Task<MuscleGroupDto> CreateMuscleGroupAsync(CreateMuscleGroupRequestDto request);
     Task SeedDataAsync();
     Task<ExerciseDto> UpdateExerciseAsync(Guid id, UpdateExerciseRequestDto request);
+    Task ClearAllTrainingDataAsync();
 }

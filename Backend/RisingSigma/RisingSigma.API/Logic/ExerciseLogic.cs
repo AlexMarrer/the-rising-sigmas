@@ -43,9 +43,7 @@ public class ExerciseLogic : IExerciseLogic
     {
         var muscleGroups = await _applicationDbContext.MuscleGroup.ToListAsync();
         return muscleGroups.Select(mg => mg.ToDto());
-    }
-
-    public async Task<CreateExerciseResponseDto> CreateExerciseAsync(CreateExerciseRequestDto request)
+    }    public async Task<CreateExerciseResponseDto> CreateExerciseAsync(CreateExerciseRequestDto request)
     {
         // Get or create default week plan (week 1)
         var weekPlan = await GetOrCreateDefaultWeekPlan();
@@ -262,5 +260,30 @@ public class ExerciseLogic : IExerciseLogic
         await _applicationDbContext.SaveChangesAsync();
 
         return exercise.ToDto();
+    }
+
+    public async Task ClearAllTrainingDataAsync()
+    {
+        // Delete all exercises first (due to foreign key constraints)
+        var exercises = await _applicationDbContext.Exercise.ToListAsync();
+        _applicationDbContext.Exercise.RemoveRange(exercises);
+
+        // Delete all exercise templates
+        var exerciseTemplates = await _applicationDbContext.ExerciseTemplate.ToListAsync();
+        _applicationDbContext.ExerciseTemplate.RemoveRange(exerciseTemplates);
+
+        // Delete all muscle groups
+        var muscleGroups = await _applicationDbContext.MuscleGroup.ToListAsync();
+        _applicationDbContext.MuscleGroup.RemoveRange(muscleGroups);
+
+        // Delete all week plans
+        var weekPlans = await _applicationDbContext.WeekPlan.ToListAsync();
+        _applicationDbContext.WeekPlan.RemoveRange(weekPlans);
+
+        // Delete all training plans
+        var trainingPlans = await _applicationDbContext.TrainingPlan.ToListAsync();
+        _applicationDbContext.TrainingPlan.RemoveRange(trainingPlans);
+
+        await _applicationDbContext.SaveChangesAsync();
     }
 }

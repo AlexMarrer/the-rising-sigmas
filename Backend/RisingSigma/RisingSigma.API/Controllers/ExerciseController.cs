@@ -161,5 +161,20 @@ namespace RisingSigma.API.Controllers
                 return StatusCode(500, new { message = "Internal server error", success = false });
             }
         }
+
+        [HttpDelete("clear-all-data")]
+        public async Task<ActionResult> ClearAllTrainingData()
+        {
+            try
+            {
+                await _exerciseLogic.ClearAllTrainingDataAsync();
+                return Ok(new { message = "All training data cleared successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error clearing all training data");
+                return StatusCode(500, "Internal server error");
+            }
+        }
     }
 }

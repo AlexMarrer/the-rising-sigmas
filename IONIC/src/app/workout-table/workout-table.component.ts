@@ -78,15 +78,15 @@ export class WorkoutTableComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
   getDayNameFromBitValue(dayIndex: number): string {
-    // Updated to match the new day mapping (0=Sunday, 1=Monday, etc.)
+    // Updated to match the new day mapping (1=Monday, 2=Tuesday, ..., 7=Sunday)
     const dayMap: { [key: number]: string } = {
-      0: 'sunday',
       1: 'monday',
       2: 'tuesday',
       3: 'wednesday',
       4: 'thursday',
       5: 'friday',
       6: 'saturday',
+      7: 'sunday',
     };
     return dayMap[dayIndex] || '';
   }
