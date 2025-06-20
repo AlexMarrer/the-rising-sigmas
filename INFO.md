@@ -87,12 +87,30 @@ The application follows a modern microservices architecture with the following c
 
 2. **Create environment file**
    Create a `.env` file in the project root:
+
    ```env
+   # Database Configuration
    DB_PASSWORD=YourSecurePassword123!
+   DB_NAME=RisingSigma
+
+   # Docker Hub Configuration
    DOCKER_HUB_USER=dukq
+
+   # Application Ports
    API_PORT=5000
    FRONTEND_PORT=8080
    ADMINER_PORT=8090
+   DB_PORT=1433
+
+   # Development Ports (for .devcontainer)
+   DEV_FRONTEND_PORT=4200
+   IONIC_PORT=8100
+
+   # Container Names (optional, defaults provided)
+   DB_CONTAINER_NAME=rs-database
+   BACKEND_CONTAINER_NAME=rs-backend
+   FRONTEND_CONTAINER_NAME=rs-frontend
+   ADMINER_CONTAINER_NAME=rs-adminer
    ```
 
 ## Running with Docker Compose
@@ -114,22 +132,35 @@ docker-compose -f docker-compose-build.yml down
 
 **Services will be available at:**
 
-- Frontend (Ionic): http://localhost:8080
-- Backend API: http://localhost:5000
-- Database: localhost:1433
-- Adminer (Database UI): http://localhost:8090
+- Frontend (Ionic): http://localhost:${FRONTEND_PORT} (default: 8080)
+- Backend API: http://localhost:${API_PORT} (default: 5000)
+- Database: localhost:${DB_PORT} (default: 1433)
+- Adminer (Database UI): http://localhost:${ADMINER_PORT} (default: 8090)
 
 ### Option 2: Docker Hub Images
 
 Use pre-built images from Docker Hub:
 
+**Important:** Users need to create their own `.env` file with their own database password:
+
 ```bash
-# Pull and run images from Docker Hub
+# 1. Create your own .env file (copy from .env.example)
+cp .env.example .env
+
+# 2. Edit .env and set your own secure password
+# Example .env content:
+# DB_PASSWORD=MySecurePassword123!
+# DOCKER_HUB_USER=dukq
+# (other settings as needed)
+
+# 3. Pull and run images from Docker Hub
 docker-compose -f docker-compose-hub.yml up -d
 
 # Stop services
 docker-compose -f docker-compose-hub.yml down
 ```
+
+**Security Note:** The database password is **NOT** included in the Docker images. Each user sets their own password via the `.env` file.
 
 ### Database Management
 
@@ -184,11 +215,11 @@ The development environment includes:
 
 **Development Ports:**
 
-- Frontend Dev Server: http://localhost:4200
-- Backend API: http://localhost:5000 / https://localhost:5001
-- Ionic Dev Server: http://localhost:8100
-- Database: localhost:1433
-- Adminer (Database UI): http://localhost:8090
+- Frontend Dev Server: http://localhost:${DEV_FRONTEND_PORT} (default: 4200)
+- Backend API: http://localhost:${API_PORT} (default: 5000) / https://localhost:5001
+- Ionic Dev Server: http://localhost:${IONIC_PORT} (default: 8100)
+- Database: localhost:${DB_PORT} (default: 1433)
+- Adminer (Database UI): http://localhost:${ADMINER_PORT} (default: 8090)
 
 ### Development Workflow
 
@@ -364,3 +395,59 @@ docker-compose -f docker-compose-build.yml logs -f
 ## License
 
 This project is part of an academic project work and is intended for educational purposes.
+
+## Environment Variables Configuration
+
+All Docker Compose files support environment variables for flexible configuration. **Each user sets their own environment variables** - no sensitive data is included in the Docker images.
+
+### **How It Works:**
+1. Copy `.env.example` to `.env` 
+2. Set your own secure `DB_PASSWORD` and other preferences
+3. Docker Compose reads your `.env` file and applies the settings
+4. The database container uses **your** password, not a hardcoded one
+
+### **Required Variables:**
+
+- `DB_PASSWORD` - Database password (required)
+- `DOCKER_HUB_USER` - Your Docker Hub username (for hub deployment)
+
+### **Optional Variables (with defaults):**
+
+- `DB_NAME` - Database name (default: RisingSigma)
+- `API_PORT` - Backend API port (default: 5000)
+- `FRONTEND_PORT` - Frontend port (default: 8080)
+- `ADMINER_PORT` - Database UI port (default: 8090)
+- `DB_PORT` - Database port (default: 1433)
+- `DEV_FRONTEND_PORT` - Development frontend port (default: 4200)
+- `IONIC_PORT` - Ionic dev server port (default: 8100)
+
+### **Container Names (optional):**
+
+- `DB_CONTAINER_NAME` - Database container (default: rs-database)
+- `BACKEND_CONTAINER_NAME` - Backend container (default: rs-backend)
+- `FRONTEND_CONTAINER_NAME` - Frontend container (default: rs-frontend)
+- `ADMINER_CONTAINER_NAME` - Adminer container (default: rs-adminer)
+
+**Note:** Copy `.env.example` to `.env` and customize as needed.
+
+## Frequently Asked Questions (FAQ)
+
+### **Q: Do I need to know the original database password to use the Docker Hub images?**
+**A:** No! Each user sets their own database password in their `.env` file. The password is not hardcoded in the Docker images.
+
+### **Q: What happens if I don't set a DB_PASSWORD?**
+**A:** Docker Compose will fail to start because the database container requires a password. You must create a `.env` file with `DB_PASSWORD=YourPassword`.
+
+### **Q: Can I change the ports if they conflict with my system?**
+**A:** Yes! Set different ports in your `.env` file:
+```env
+API_PORT=3000        # Instead of default 5000
+FRONTEND_PORT=3001   # Instead of default 8080
+```
+
+### **Q: Are the container names configurable?**
+**A:** Yes! You can change container names via environment variables to avoid conflicts:
+```env
+DB_CONTAINER_NAME=my-custom-db
+BACKEND_CONTAINER_NAME=my-custom-api
+```
