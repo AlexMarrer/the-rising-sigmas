@@ -4,19 +4,18 @@ using RisingSigma.Database.Entities;
 namespace RisingSigma.API.Extensions;
 
 public static class MappingExtensions
-{
-    public static ExerciseDto ToDto(this Exercise entity)
+{    public static ExerciseDto ToDto(this Exercise entity)
     {
-        // Convert DayOfWeek enum to day integer (0=Sunday, 1=Monday, etc.)
+        // Convert DayOfWeek enum to day integer (1=Monday, 2=Tuesday, ..., 7=Sunday)
         int day = entity.Day switch
         {
-            DayOfWeek.Sunday => 0,
             DayOfWeek.Monday => 1,
             DayOfWeek.Tuesday => 2,
             DayOfWeek.Wednesday => 3,
             DayOfWeek.Thursday => 4,
             DayOfWeek.Friday => 5,
             DayOfWeek.Saturday => 6,
+            DayOfWeek.Sunday => 7,
             _ => 1 // Default to Monday
         };
 
@@ -63,20 +62,18 @@ public static class MappingExtensions
             Version = entity.Version,
             TrainingPlanId = entity.TrainingPlanId
         };
-    }
-
-    public static Exercise ToEntity(this CreateExerciseRequestDto dto, Guid exerciseTemplateId, Guid weekPlanId, int day)
+    }    public static Exercise ToEntity(this CreateExerciseRequestDto dto, Guid exerciseTemplateId, Guid weekPlanId, int day)
     {
-        // Convert day integer to DayOfWeek enum (0=Sunday, 1=Monday, etc.)
+        // Convert day integer to DayOfWeek enum (1=Monday, 2=Tuesday, ..., 7=Sunday)
         DayOfWeek dayOfWeek = day switch
         {
-            0 => DayOfWeek.Sunday,
             1 => DayOfWeek.Monday,
             2 => DayOfWeek.Tuesday,
             3 => DayOfWeek.Wednesday,
             4 => DayOfWeek.Thursday,
             5 => DayOfWeek.Friday,
             6 => DayOfWeek.Saturday,
+            7 => DayOfWeek.Sunday,
             _ => DayOfWeek.Monday
         };
 

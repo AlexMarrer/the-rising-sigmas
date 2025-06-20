@@ -38,15 +38,14 @@ export class AddExerciseModalComponent implements OnInit {
   };
 
   showCreateTemplate = false;
-
   days = [
     { value: 1, label: 'Montag', selected: false },
     { value: 2, label: 'Dienstag', selected: false },
-    { value: 4, label: 'Mittwoch', selected: false },
-    { value: 8, label: 'Donnerstag', selected: false },
-    { value: 16, label: 'Freitag', selected: false },
-    { value: 32, label: 'Samstag', selected: false },
-    { value: 0, label: 'Sonntag', selected: false },
+    { value: 3, label: 'Mittwoch', selected: false },
+    { value: 4, label: 'Donnerstag', selected: false },
+    { value: 5, label: 'Freitag', selected: false },
+    { value: 6, label: 'Samstag', selected: false },
+    { value: 7, label: 'Sonntag', selected: false },
   ];
 
   constructor(private modalController: ModalController, private exerciseService: ExerciseService) {}
