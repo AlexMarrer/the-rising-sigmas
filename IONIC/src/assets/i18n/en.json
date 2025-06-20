@@ -14,7 +14,26 @@
   "SETTINGS": {
     "TITLE": "Settings",
     "SUBTITLE": "This is the settings page",
-    "CLEAR_DATA": "Clear Data"
+    "CLEAR_DATA": "Clear Data",
+    "LOCAL_DATA": {
+      "TITLE": "Local Data",
+      "DESCRIPTION": "Clears local browser data (LocalStorage)"
+    },
+    "TRAINING_DATA": {
+      "TITLE": "Training Data",
+      "BUTTON": "Delete All Training Data",
+      "DESCRIPTION": "Deletes ALL exercises, exercise templates, muscle groups, week plans and training plans from the database.",
+      "WARNING": "This action cannot be undone!",
+      "CONFIRM": {
+        "HEADER": "Delete All Training Data",
+        "MESSAGE": "Are you sure you want to delete ALL training data? This action cannot be undone.",
+        "CANCEL": "Cancel",
+        "DELETE": "Yes, delete all"
+      },
+      "LOADING": "Deleting all training data...",
+      "SUCCESS": "All training data has been successfully deleted.",
+      "ERROR": "Error deleting training data."
+    }
   },
   "ACCOUNT": {
     "TITLE": "Account",

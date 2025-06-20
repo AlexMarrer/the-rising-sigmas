@@ -1,9 +1,29 @@
 <app-header title="{{ 'SETTINGS.TITLE' | translate }}"></app-header>
 
-<ion-content [fullscreen]="true">
-  <ion-title>{{ 'SETTINGS.SUBTITLE' | translate }}</ion-title>
+<ion-content [fullscreen]="true" class="settings">
+  <ion-title class="settings__title">{{ 'SETTINGS.SUBTITLE' | translate }}</ion-title>
 
-  <ion-button (click)="clearData()">
-    {{ 'SETTINGS.CLEAR_DATA' | translate }}
-  </ion-button>
+  <div class="settings__section">
+    <h3 class="settings__section-title">{{ 'SETTINGS.LOCAL_DATA.TITLE' | translate }}</h3>
+    <ion-button (click)="clearData()" fill="outline" color="warning" class="settings__button">
+      {{ 'SETTINGS.CLEAR_DATA' | translate }}
+    </ion-button>
+    <p class="settings__description">{{ 'SETTINGS.LOCAL_DATA.DESCRIPTION' | translate }}</p>
+  </div>
+
+  <div class="settings__section">
+    <h3 class="settings__section-title">{{ 'SETTINGS.TRAINING_DATA.TITLE' | translate }}</h3>
+    <ion-button
+      (click)="clearAllTrainingData()"
+      fill="outline"
+      color="danger"
+      class="settings__button"
+    >
+      {{ 'SETTINGS.TRAINING_DATA.BUTTON' | translate }}
+    </ion-button>
+    <p class="settings__description">
+      {{ 'SETTINGS.TRAINING_DATA.DESCRIPTION' | translate }}
+      <strong class="settings__warning">{{ 'SETTINGS.TRAINING_DATA.WARNING' | translate }}</strong>
+    </p>
+  </div>
 </ion-content>

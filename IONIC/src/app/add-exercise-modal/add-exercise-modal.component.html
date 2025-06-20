@@ -1,0 +1,267 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Übung hinzufügen</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding add-exercise-modal">
+  <div class="add-exercise-modal__seed-section">
+    <ion-button expand="block" fill="outline" color="secondary" (click)="seedData()" size="small">
+      <ion-icon name="leaf-outline" slot="start"></ion-icon>
+      Testdaten erstellen
+    </ion-button>
+    <p class="add-exercise-modal__seed-info">
+      Erstellt Muskelgruppen und Übungsvorlagen zum Testen
+    </p>
+  </div>
+
+  <form #ngForm="ngForm">
+    <!-- Muskelgruppe auswählen -->
+    <ion-item class="add-exercise-modal__item">
+      <ion-select
+        class="add-exercise-modal__select"
+        label="Muskelgruppe (Filter)"
+        label-placement="floating"
+        [(ngModel)]="selectedMuscleGroupId"
+        (ionChange)="onMuscleGroupChange()"
+        name="muscleGroup"
+      >
+        <ion-select-option value="">Alle anzeigen</ion-select-option>
+        <ion-select-option *ngFor="let muscleGroup of muscleGroups" [value]="muscleGroup.id">
+          {{ muscleGroup.name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+    <!-- Übungsvorlage auswählen -->
+    <ion-item class="add-exercise-modal__item">
+      <ion-select
+        class="add-exercise-modal__select"
+        label="Übung auswählen"
+        label-placement="floating"
+        [(ngModel)]="exerciseForm.exerciseTemplateId"
+        name="exerciseTemplate"
+        required
+      >
+        <ion-select-option *ngFor="let template of filteredExerciseTemplates" [value]="template.id">
+          {{ template.name }}
+          <span *ngIf="template.muscleGroup"> - {{ template.muscleGroup.name }}</span>
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Neue Übungsvorlage erstellen -->
+    <div class="add-exercise-modal__template-section">
+      <ion-button
+        expand="block"
+        fill="outline"
+        color="success"
+        (click)="toggleCreateTemplate()"
+        size="small"
+      >
+        <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+        {{ showCreateTemplate ? "Neue Vorlage ausblenden" : "Neue Übungsvorlage erstellen" }}
+      </ion-button>
+      <div *ngIf="showCreateTemplate" class="add-exercise-modal__template-form">
+        <ion-item>
+          <ion-input
+            class="add-exercise-modal__input"
+            label="Name der neuen Übung"
+            label-placement="floating"
+            [(ngModel)]="templateForm.name"
+            name="templateName"
+            placeholder="z.B. Kniebeugen"
+            required
+          >
+          </ion-input>
+        </ion-item>
+
+        <!-- Toggle für neue Muskelgruppe -->
+        <ion-item>
+          <ion-checkbox
+            [(ngModel)]="templateForm.createNewMuscleGroup"
+            (ionChange)="onMuscleGroupToggle()"
+            name="createNewMuscleGroup"
+          ></ion-checkbox>
+          <ion-label class="ion-margin-start">Neue Muskelgruppe erstellen</ion-label>
+        </ion-item>
+
+        <!-- Bestehende Muskelgruppe auswählen -->
+        <ion-item *ngIf="!templateForm.createNewMuscleGroup">
+          <ion-select
+            class="add-exercise-modal__select"
+            label="Muskelgruppe für neue Übung"
+            label-placement="floating"
+            [(ngModel)]="templateForm.muscleGroupId"
+            name="templateMuscleGroup"
+            [required]="!templateForm.createNewMuscleGroup"
+          >
+            <ion-select-option *ngFor="let muscleGroup of muscleGroups" [value]="muscleGroup.id">
+              {{ muscleGroup.name }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <!-- Neue Muskelgruppe erstellen -->
+        <ion-item *ngIf="templateForm.createNewMuscleGroup">
+          <ion-input
+            class="add-exercise-modal__input"
+            label="Name der neuen Muskelgruppe"
+            label-placement="floating"
+            [(ngModel)]="templateForm.muscleGroupName"
+            name="templateMuscleGroupName"
+            placeholder="z.B. Cardio"
+            [required]="templateForm.createNewMuscleGroup"
+          >
+          </ion-input>
+        </ion-item>
+
+        <ion-button
+          expand="block"
+          (click)="createNewTemplate()"
+          [disabled]="!isTemplateFormValid()"
+          color="success"
+          size="small"
+        >
+          <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+          {{
+            templateForm.createNewMuscleGroup
+              ? "Vorlage + Muskelgruppe erstellen"
+              : "Vorlage erstellen"
+          }}
+        </ion-button>
+      </div>
+    </div>
+    <!-- Wochentage (Mehrfachauswahl) -->
+    <div class="add-exercise-modal__days-selection">
+      <ion-label class="add-exercise-modal__days-label">
+        <div class="add-exercise-modal__label-title">Wochentage auswählen</div>
+        <div class="add-exercise-modal__label-description">
+          Wählen Sie einen oder mehrere Tage aus
+        </div>
+      </ion-label>
+
+      <div class="add-exercise-modal__days-grid">
+        <ion-chip
+          *ngFor="let day of days"
+          [color]="day.selected ? 'primary' : 'medium'"
+          (click)="onDayToggle(day)"
+          [outline]="!day.selected"
+        >
+          <ion-icon
+            class="add-exercise-modal__event-icon"
+            name="calendar-outline"
+            *ngIf="day.selected"
+          ></ion-icon>
+          {{ day.label }}
+        </ion-chip>
+      </div>
+
+      <!-- Fallback: Einzelner Tag -->
+      <ion-item class="add-exercise-modal__item" *ngIf="exerciseForm.selectedDays.length === 0">
+        <ion-select
+          class="add-exercise-modal__select"
+          label="Einzelner Wochentag (Fallback)"
+          label-placement="floating"
+          [(ngModel)]="exerciseForm.day"
+          name="day"
+        >
+          <ion-select-option *ngFor="let day of days" [value]="day.value">
+            {{ day.label }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </div>
+
+    <!-- Sätze -->
+    <ion-item class="add-exercise-modal__item">
+      <ion-input
+        class="add-exercise-modal__input"
+        label="Sätze"
+        label-placement="floating"
+        type="number"
+        [(ngModel)]="exerciseForm.sets"
+        name="sets"
+        min="1"
+        max="20"
+        required
+      >
+      </ion-input>
+    </ion-item>
+
+    <!-- Wiederholungen -->
+    <ion-item class="add-exercise-modal__item">
+      <ion-input
+        class="add-exercise-modal__input"
+        label="Wiederholungen"
+        label-placement="floating"
+        type="number"
+        [(ngModel)]="exerciseForm.reps"
+        name="reps"
+        min="1"
+        max="50"
+        required
+      >
+      </ion-input>
+    </ion-item>
+
+    <!-- RPE -->
+    <ion-item class="add-exercise-modal__item">
+      <ion-input
+        class="add-exercise-modal__input"
+        label="RPE (Rate of Perceived Exertion)"
+        label-placement="floating"
+        type="number"
+        [(ngModel)]="exerciseForm.rpe"
+        name="rpe"
+        min="1"
+        max="10"
+        step="0.5"
+        required
+      >
+      </ion-input>
+      <ion-note class="add-exercise-modal__note" slot="helper"
+        >1 = sehr leicht, 10 = maximale Anstrengung</ion-note
+      >
+    </ion-item>
+
+    <!-- Notizen -->
+    <ion-item class="add-exercise-modal__item">
+      <ion-textarea
+        class="add-exercise-modal__textarea"
+        label="Notizen (optional)"
+        label-placement="floating"
+        [(ngModel)]="exerciseForm.notes"
+        name="notes"
+        rows="3"
+        placeholder="z.B. Gewicht, besondere Hinweise..."
+      >
+      </ion-textarea>
+    </ion-item>
+
+    <!-- Aktions-Buttons -->
+    <div class="add-exercise-modal__action-buttons">
+      <ion-button
+        expand="block"
+        (click)="createExercise()"
+        [disabled]="!ngForm.valid || (!exerciseForm.selectedDays.length && !exerciseForm.day)"
+        color="primary"
+      >
+        <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+        {{
+          exerciseForm.selectedDays.length > 1
+            ? "Übungen hinzufügen (" + exerciseForm.selectedDays.length + " Tage)"
+            : "Übung hinzufügen"
+        }}
+      </ion-button>
+
+      <ion-button expand="block" fill="outline" (click)="dismiss()" color="medium">
+        Abbrechen
+      </ion-button>
+    </div>
+  </form>
+</ion-content>

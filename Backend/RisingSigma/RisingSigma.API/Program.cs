@@ -5,7 +5,15 @@ using RisingSigma.Database;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add CORS service registration
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 // Add services to the container.
 builder.Services.AddTransient<IVerificationLogic, VerificationLogic>();
@@ -41,6 +49,9 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// CORS must be the very first middleware
+app.UseCors();
+
 using (var scope = app.Services.CreateScope())
 {
     try 
@@ -55,13 +66,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.UseCors(options => options
-    .AllowAnyHeader()
-    .AllowAnyMethod()
-    .AllowCredentials()
-    .SetIsOriginAllowed((host) => true)
-);
-
+// CORS must be the first middleware to handle preflight requests
 app.UseRouting();
 
 app.UseSwagger();
@@ -77,7 +82,6 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
-app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
