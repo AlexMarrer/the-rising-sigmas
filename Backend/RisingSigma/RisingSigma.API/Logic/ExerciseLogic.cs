@@ -203,7 +203,7 @@ public class ExerciseLogic : IExerciseLogic
                     Id = Guid.NewGuid(),
                     Name = "Default Training Plan",
                     Description = "Auto-generated default training plan",
-                    StartTime = DateTime.Now,
+                    StartTime = DateTime.UtcNow,
                     CycleWeeks = 4,
                     UserId = user.Id // Reference the existing user
                 };

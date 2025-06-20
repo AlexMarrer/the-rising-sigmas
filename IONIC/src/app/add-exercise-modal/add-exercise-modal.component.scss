@@ -1,78 +1,81 @@
-.seed-data-section {
-  margin-bottom: 1.5rem;
-  text-align: center;
+.add-exercise-modal {
+  // BEM: Block__Element
+  &__seed-section {
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
 
-  .seed-info {
+  &__seed-info {
     margin: 0.5rem 0 0;
     color: var(--ion-color-medium);
     font-size: 0.875rem;
   }
-}
 
-.action-buttons {
-  margin-top: 1.5rem;
+  &__action-buttons {
+    margin-top: 1.5rem;
 
-  ion-button {
-    margin-bottom: 12px;
+    ion-button {
+      margin-bottom: 12px;
+    }
   }
-}
 
-ion-item {
-  margin-bottom: 0.5rem;
-}
+  &__item {
+    margin-bottom: 0.5rem;
+  }
 
-ion-select,
-ion-input,
-ion-textarea {
-  --padding-top: 0.5rem;
-  --padding-bottom: 0.5rem;
-}
+  &__input,
+  &__select,
+  &__textarea {
+    --padding-top: 0.5rem;
+    --padding-bottom: 0.5rem;
+  }
 
-ion-note {
-  margin-top: 0.25rem;
-  font-size: 0.75rem;
-}
+  &__note {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+  }
 
-.template-creation-section {
-  margin: 1rem 0;
-  padding: 1rem;
-  border: 1px solid var(--ion-color-light-shade);
-  border-radius: 8px;
-  background: transparent;
+  &__template-section {
+    margin: 1rem 0;
+    padding: 1rem;
+    border: 1px solid var(--ion-color-light-shade);
+    border-radius: 8px;
+    background: transparent;
+  }
 
-  .create-template-form {
+  &__template-form {
     margin-top: 1rem;
 
     ion-item {
       margin-bottom: 0.75rem;
     }
   }
-}
 
-.days-selection {
-  margin: 1rem 0;
-  padding: 1rem;
-  border: 1px solid var(--ion-color-light-shade);
-  border-radius: 8px;
-  background: transparent;
-
-  ion-label {
-    display: block;
-    margin-bottom: 1rem;
-
-    .label-title {
-      margin: 0 0 0.25rem;
-      color: var(--ion-color-dark);
-    }
-
-    .label-description {
-      margin: 0;
-      color: var(--ion-color-medium);
-      font-size: 0.875rem;
-    }
+  &__days-selection {
+    margin: 1rem 0;
+    padding: 1rem;
+    border: 1px solid var(--ion-color-light-shade);
+    border-radius: 8px;
+    background: transparent;
   }
 
-  .days-grid {
+  &__days-label {
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  &__label-title {
+    margin: 0 0 0.25rem;
+    color: var(--ion-color-dark);
+  }
+
+  &__label-description {
+    margin: 0;
+    color: var(--ion-color-medium);
+    font-size: 0.875rem;
+  }
+
+  &__days-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
@@ -82,9 +85,14 @@ ion-note {
       transition: all 0.2s ease;
       cursor: pointer;
 
+      // BEM: Block__Element--Modifier
       &:hover {
         transform: scale(1.05);
       }
     }
+  }
+
+  &__event-icon {
+    margin-right: 0.25rem;
   }
 }

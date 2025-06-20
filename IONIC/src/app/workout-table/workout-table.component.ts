@@ -106,7 +106,7 @@ export class WorkoutTableComponent implements OnInit, AfterViewInit, OnDestroy {
       cssClass: 'add-exercise-modal',
     });
 
-    modal.onDidDismiss().then((result) => {
+    modal.onDidDismiss().then(() => {
       this.loadExercises();
     });
 

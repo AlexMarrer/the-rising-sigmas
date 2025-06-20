@@ -6,7 +6,6 @@ import {
   MuscleGroup,
   CreateExerciseRequest,
   CreateExerciseTemplateRequest,
-  CreateMuscleGroupRequest,
 } from '../services/exercise.service';
 
 @Component({

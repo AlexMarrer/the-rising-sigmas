@@ -104,7 +104,6 @@ The application follows a modern microservices architecture with the following c
 
    # Development Ports (for .devcontainer)
    DEV_FRONTEND_PORT=4200
-   IONIC_PORT=8100
 
    # Container Names (optional, defaults provided)
    DB_CONTAINER_NAME=rs-database
@@ -217,7 +216,6 @@ The development environment includes:
 
 - Frontend Dev Server: http://localhost:${DEV_FRONTEND_PORT} (default: 4200)
 - Backend API: http://localhost:${API_PORT} (default: 5000) / https://localhost:5001
-- Ionic Dev Server: http://localhost:${IONIC_PORT} (default: 8100)
 - Database: localhost:${DB_PORT} (default: 1433)
 - Adminer (Database UI): http://localhost:${ADMINER_PORT} (default: 8090)
 
@@ -365,7 +363,7 @@ Access tasks via: `Terminal` → `Run Task` or `Ctrl+Shift+P` → `Tasks: Run Ta
 
 2. **Port Conflicts**
 
-   - Ensure ports 1433, 4200, 5000, 5001, 8080, 8090, and 8100 are not in use
+   - Ensure ports 1433, 4200, 5000, 5001, 8080, and 8090 are not in use
    - Modify port mappings in docker-compose files if needed
 
 3. **Frontend Build Issues**
@@ -401,7 +399,8 @@ This project is part of an academic project work and is intended for educational
 All Docker Compose files support environment variables for flexible configuration. **Each user sets their own environment variables** - no sensitive data is included in the Docker images.
 
 ### **How It Works:**
-1. Copy `.env.example` to `.env` 
+
+1. Copy `.env.example` to `.env`
 2. Set your own secure `DB_PASSWORD` and other preferences
 3. Docker Compose reads your `.env` file and applies the settings
 4. The database container uses **your** password, not a hardcoded one
@@ -419,7 +418,6 @@ All Docker Compose files support environment variables for flexible configuratio
 - `ADMINER_PORT` - Database UI port (default: 8090)
 - `DB_PORT` - Database port (default: 1433)
 - `DEV_FRONTEND_PORT` - Development frontend port (default: 4200)
-- `IONIC_PORT` - Ionic dev server port (default: 8100)
 
 ### **Container Names (optional):**
 
@@ -433,20 +431,26 @@ All Docker Compose files support environment variables for flexible configuratio
 ## Frequently Asked Questions (FAQ)
 
 ### **Q: Do I need to know the original database password to use the Docker Hub images?**
+
 **A:** No! Each user sets their own database password in their `.env` file. The password is not hardcoded in the Docker images.
 
 ### **Q: What happens if I don't set a DB_PASSWORD?**
+
 **A:** Docker Compose will fail to start because the database container requires a password. You must create a `.env` file with `DB_PASSWORD=YourPassword`.
 
 ### **Q: Can I change the ports if they conflict with my system?**
+
 **A:** Yes! Set different ports in your `.env` file:
+
 ```env
 API_PORT=3000        # Instead of default 5000
 FRONTEND_PORT=3001   # Instead of default 8080
 ```
 
 ### **Q: Are the container names configurable?**
+
 **A:** Yes! You can change container names via environment variables to avoid conflicts:
+
 ```env
 DB_CONTAINER_NAME=my-custom-db
 BACKEND_CONTAINER_NAME=my-custom-api
