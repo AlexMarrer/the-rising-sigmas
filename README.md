@@ -1,171 +1,140 @@
-# Project Documentation: Training Plan App
+# Rising Sigmas - Training Plan App
 
-## Overview
+## 🎯 Overview
 
-The Training Plan App aims to simplify creating and managing workout plans, providing a user-friendly alternative to Excel. The project combines a C# backend with an Ionic frontend using Angular.
+A user-friendly alternative to Excel for creating and managing training plans.  
+**Tech Stack**: .NET Core Backend + Angular/Ionic Frontend
 
----
+## ✅ Implemented Features
 
-## Table of Contents
+- 🏋️ **Add Exercises** with templates and muscle groups
+- 📅 **Workout Calendar** with drag & drop between days
+- 🔄 **Multi-Day Selection** for exercises on multiple days
+- 💾 **Automatic Saving** for all changes
+- 🎨 **Responsive Design** for all devices
 
-- [Feature Documentation](#feature-documentation)
-- [Features](#features)
-- [Project Structure](#project-structure)
-  - [Backend (C#)](#backend-c)
-  - [Frontend (Ionic + Angular)](#frontend-ionic-angular)
-- [Dependencies](#dependencies)
-- [Setup Instructions](#setup-instructions)
+## 🚀 Quick Start
 
----
+### Prerequisites
 
-## Features
+- .NET 8.0 SDK
+- Node.js (for Angular/Ionic)
+- SQL Server (or Dev Container)
 
-1. **Customizable Workout Plans**: Create, edit, and manage workout plans efficiently. :large_orange_diamond: *still in progress*
-2. **Responsive Design**: Works seamlessly across devices. :white_check_mark: **DONE**
-3. **User Authentication**: Secure login and registration system. :large_orange_diamond: *still in progress*
-4. **Data Persistence**: Stores user plans in a structured and accessible manner. :large_orange_diamond: *still in progress*
-
----
-
-## Project Structure
-
-### Backend (C#)
-
-The backend provides APIs for managing user workout plans, and other core functionalities. :large_orange_diamond: *still in progress*
-
-#### Key Directories
-
-- **Controllers**: Handles API endpoints.
-- **Models**: Defines the data structures.
-- **Services**: Contains business logic.
-- **Database**: Manages data storage and retrieval.
-
-#### Example Structure
-
-```
-Backend/
-├── Controllers/
-│   └── WorkoutPlanController.cs
-├── Models/
-│   ├── User.cs
-│   └── WorkoutPlan.cs
-├── Services/
-│   └── WorkoutPlanService.cs
-└── Database/
-       └── ApplicationDbContext.cs
-```
-
-### Frontend (Ionic + Angular)
-
-The frontend is responsible for delivering an interactive user experience. It leverages Angular for state management and Ionic for UI components.
-
-#### Key Directories
-
-- **Pages**: Defines the app views.
-- **Components**: Reusable UI elements.
-- **Services**: Handles communication with the backend.
-- **Assets**: Stores static files like images and styles.
-
-#### Example Structure
-
-```
-Frontend/
-├── src/
-    ├── app/
-    │   ├── pages/
-    │   │   ├── login/
-    │   │   └── dashboard/
-    │   ├── components/
-    │   │   └── navbar/
-    │   ├── services/
-    │   │   └── api.service.ts
-    │   ├── assets/
-    │   └── environments/
-    └── index.html
-```
-
----
-
-## Dependencies
-
-### Backend
-
-Key dependencies listed in the C# project file:
-
-- **Microsoft.EntityFrameworkCore**: Database management.
-- **Microsoft.AspNetCore.Identity**: Authentication and authorization.
-
-### Frontend
-
-Dependencies as specified in `package.json`:
-
-- **@angular/core**: Angular framework.
-- **@ionic/angular**: Ionic components.
-- **rxjs**: Reactive programming library.
-- **angularfire**: Firebase integration (optional).
-
----
-
-## Setup Instructions
-
-### Backend
+### Development Setup
 
 ```bash
-# Install .NET SDK
-# Clone the repository
-# Navigate to the Backend directory
-cd Backend
-
-# Restore dependencies
-dotnet restore
-
-# Start the backend server
+# Start Backend
+cd Backend/RisingSigma/RisingSigma.API
 dotnet run
-```
 
-### Frontend
-
-```bash
-# Install Node.js and npm
-# Navigate to the Frontend directory
-cd Frontend
-
-# Install dependencies
+# Start Frontend
+cd IONIC
 npm install
-
-# Start the development server with SCSS validation
 npm start
 ```
 
-### Installing Ionic (if needed)
+### With Dev Container
 
 ```bash
-# Install Ionic CLI globally
-npm install -g @ionic/cli
-
-# Verify the installation
-ionic --version
+# Simply open in VS Code and "Reopen in Container"
+# Everything will be configured automatically
 ```
 
-The project is already set up, so there's no need to create a new Ionic project. Use `npm start` to launch the existing app and run SCSS validation as per the project’s guidelines.
+## 📁 Project Structure
+
+```
+📦 Rising Sigmas
+├── 🖥️  Backend/         # .NET Core API
+│   ├── Dockerfile       # Backend Container
+│   └── RisingSigma/     # .NET Solution
+│       ├── RisingSigma.API/     # REST API
+│       ├── RisingSigma.Database/ # Entity Framework
+│       └── RisingSigma.Api.Test/ # Unit Tests
+├── 📱 IONIC/           # Angular/Ionic Frontend
+│   ├── src/app/        # Angular Components
+│   ├── www/            # Build Output
+│   └── Dockerfile      # Frontend Container
+├── 🗄️ db/              # Database Container Setup
+├── 🐳 .devcontainer/   # Dev Container Setup
+│   ├── docker-compose-dev.yml
+│   └── devcontainer.json
+├── 🔧 .vscode/         # VS Code Configuration
+├── 🔀 .github/         # GitHub Actions/Workflows
+├── 🐳 docker-compose-*.yml # Docker Container Setup
+├── 📄 .env             # Environment Variables
+├── 📖 README.md        # Entry Point
+└── 📖 INFO.md          # Technical Details
+```
+
+## 🔧 API Endpoints
+
+### Exercise Management
+
+- `GET /api/exercise` - All exercises
+- `POST /api/exercise` - Create new exercise
+- `PUT /api/exercise/{id}` - Update exercise
+- `GET /api/exercise/templates` - Exercise templates
+- `GET /api/exercise/musclegroups` - Muscle groups
+- `POST /api/exercise/seed-data` - Generate test data
+
+### URLs
+
+- **Backend**: `http://localhost:5000`
+- **Frontend**: `http://localhost:4200`
+- **Swagger**: `http://localhost:5000`
+
+## 🏗️ Architecture
+
+### Backend (.NET Core)
+
+- **Clean Architecture** with DTO Pattern
+- **Entity Framework** for database access
+- **Swagger** for API documentation
+- **CORS** configured for local development
+
+### Frontend (Angular/Ionic)
+
+- **Ionic Components** for native app feeling
+- **Angular CDK Drag-Drop** for calendar interaction
+- **Responsive Design** for desktop and mobile
+- **HTTP Interceptors** for API communication
+
+### Database (SQL Server)
+
+- **Code-First** Entity Framework Migrations
+- **Seed Data** for easy testing
+- **Automatic Migrations** on startup
+
+## 📖 Detailed Documentation
+
+For technical details see:
+
+- **[INFO.md](./INFO.md)** - Complete project documentation
+
+## 🎨 Features in Detail
+
+### Drag & Drop Calendar
+
+- ✅ Move exercises between weekdays
+- ✅ Sorting within a day
+- ✅ Works for empty days too
+- ✅ Automatic backend synchronization
+
+### Exercise Management
+
+- ✅ Template-based exercise creation
+- ✅ Multi-Day Selection with chips
+- ✅ Muscle group filters
+- ✅ Automatic calendar updates
+
+### Backend API
+
+- ✅ Clean DTO architecture
+- ✅ CRUD operations for all entities
+- ✅ Automatic seed data generation
+- ✅ Comprehensive error handling
 
 ---
 
-## Feature Documentation
-
-For detailed information about specific features and their implementation, refer to the [Feature Documentation](./addFeature.md).
-
----
-
-## Future Improvements
-
-### Planned Enhancements
-
-1. **Third-Party API Integration**: Connect with external fitness APIs to provide users with a broader range of data and insights.
-2. **Advanced Analytics**: Introduce tools to help users track and visualize their progress effectively.
-3. **Multi-Language Support**: Expand language options, including English and German, to make the app accessible to a wider audience.
-4. **Offline Functionality**: Enable access to workout plans even without an internet connection.
-
----
-
-This documentation serves as a foundational guide for developers to understand and contribute to the project. For detailed implementation notes, refer to the respective `README` files in the Backend and Frontend directories.
+_Developed with ❤️ for better strength training_

@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace RisingSigma.Database.Entities
+namespace RisingSigma.Database.Entities;
+
+public class User
 {
-    public class User
-    {
-        [Key]
-        public Guid Id { get; set; }
-        public string Role { get; set; }
+    [Key]
+    public Guid Id { get; set; }
+    public string Role { get; set; } = "";
 
-        public List<TrainingPlan> Plan { get; set; }
-    }
+    public List<TrainingPlan>? Plan { get; set; }
 }
