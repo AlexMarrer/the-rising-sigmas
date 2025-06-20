@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace RisingSigma.Database.Entities
+namespace RisingSigma.Database.Entities;
+
+public class ExerciseTemplate
 {
-    public class ExerciseTemplate
-    {
-        [Key]
-        public Guid Id { get; set; }
-        public string Name { get; set; }
+    [Key]
+    public Guid Id { get; set; }
+    public string Name { get; set; } = "";
+    public Guid MuscleGroupId { get; set; }
 
-        public MuscleGroup MuscleGroup { get; set; }
-    }
+    public MuscleGroup? MuscleGroup { get; set; }
 }

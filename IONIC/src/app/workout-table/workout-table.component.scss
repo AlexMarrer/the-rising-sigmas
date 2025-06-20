@@ -100,6 +100,47 @@
     width: 100%;
     min-height: 12.5rem;
     padding: 0.5rem;
+
+    &.cdk-drop-list {
+      min-height: 12.5rem; /* Increased from 2rem to match parent */
+      transition: background-color 200ms ease;
+    }
+
+    &.cdk-drop-list-dragging {
+      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
+
+    &.cdk-drop-list-receiving {
+      border-radius: 0.5rem;
+      background-color: rgba(map.get(variables.$color-map, "primary"), 5%);
+    }
+
+    // Ensure empty drop zones are visible and droppable
+    &:empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 12.5rem;
+      border: 0.125rem dashed rgba(map.get(variables.$color-map, "primary"), 20%);
+      border-radius: 0.5rem;
+
+      &::after {
+        content: "Drop exercises here";
+        color: rgba(map.get(variables.$color-map, "primary"), 40%);
+        font-size: 0.9rem;
+        font-style: italic;
+      }
+    }
+
+    &:empty.cdk-drop-list-receiving {
+      border-color: rgba(map.get(variables.$color-map, "primary"), 60%);
+      background-color: rgba(map.get(variables.$color-map, "primary"), 10%);
+
+      &::after {
+        content: "Release to drop here";
+        color: rgba(map.get(variables.$color-map, "primary"), 80%);
+      }
+    }
   }
 
   &__event {
@@ -136,14 +177,19 @@
     &.cdk-drag-preview {
       box-sizing: border-box;
       border-radius: 0.5rem;
-      box-shadow: 0 5px 5px -3px rgb(0 0 0 / 20%), 0 8px 10px 1px rgb(0 0 0 / 14%),
-        0 3px 14px 2px rgb(0 0 0 / 12%);
+      box-shadow: 0 0.3125rem 0.3125rem -0.1875rem rgb(0 0 0 / 20%),
+        0 0.5rem 0.625rem 0.0625rem rgb(0 0 0 / 14%), 0 0.1875rem 0.875rem 0.125rem rgb(0 0 0 / 12%);
     }
 
     &.cdk-drag-placeholder {
       opacity: 0.5;
       background: rgba(map.get(variables.$color-map, "primary"), 5%);
     }
+  }
+
+  &__event-content {
+    width: 100%;
+    pointer-events: none; /* Let CDK handle drag events */
   }
 
   &__event-list.cdk-drop-list-dragging &__event:not(.cdk-drag-placeholder) {

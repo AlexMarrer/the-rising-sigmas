@@ -4,13 +4,13 @@ services:
     build:
       context: ./db
     image: ${DOCKER_HUB_USER}/rs-database:latest
-    container_name: rs-database
+    container_name: ${DB_CONTAINER_NAME:-rs-database}
     environment:
       ACCEPT_EULA: "Y"
       SA_PASSWORD: ${DB_PASSWORD}
       MSSQL_PID: "Express"
     ports:
-      - "1433:1433"
+      - "${DB_PORT:-1433}:1433"
     healthcheck:
       test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-U", "SA", "-P", "${DB_PASSWORD}", "-Q", "SELECT 1"]
       interval: 30s
@@ -26,12 +26,13 @@ services:
   # Backend Docker Hub
   backend:
     image: ${DOCKER_HUB_USER}/rs-backend:latest
-    container_name: rs-backend
+    container_name: ${BACKEND_CONTAINER_NAME:-rs-backend}
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__Database=Server=database;Database=RisingSigma;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__Database=Server=database;Database=${DB_NAME:-RisingSigma};User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;
     ports:
-      - "5000:80"
+      - "${API_PORT:-5000}:80"
     depends_on:
       database:
         condition: service_healthy
@@ -42,9 +43,9 @@ services:
   # Frontend Docker Hub
   frontend:
     image: ${DOCKER_HUB_USER}/rs-frontend:latest
-    container_name: rs-frontend
+    container_name: ${FRONTEND_CONTAINER_NAME:-rs-frontend}
     ports:
-      - "8080:80"
+      - "${FRONTEND_PORT:-8080}:80"
     environment:
       - API_URL=http://backend:80
     depends_on:
@@ -61,11 +62,12 @@ services:
 
   adminer:
     image: adminer:latest
-    container_name: rs-adminer
+    container_name: ${ADMINER_CONTAINER_NAME:-rs-adminer}
     ports:
-      - "8090:8080"
+      - "${ADMINER_PORT:-8090}:8080"
     environment:
       - ADMINER_DEFAULT_SERVER=database
+      - ADMINER_DEFAULT_DB=${DB_NAME:-RisingSigma}
       - ADMINER_DESIGN=pepa-linha
     depends_on:
       database:
