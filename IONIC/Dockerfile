@@ -7,7 +7,9 @@ COPY package*.json ./
 RUN npm ci --silent \
     && npm cache clean --force
 
+# Copy all source files (dockerignore excludes compiled files)
 COPY . .
+
 RUN npm run build --prod --silent
 
 # Production stage

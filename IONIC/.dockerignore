@@ -1,0 +1,21 @@
+node_modules
+# Exclude compiled files but keep assets
+www/*.js
+www/*.css
+www/*.map
+www/*.txt
+www/polyfills*
+www/main*
+www/runtime*
+www/styles*
+www/[0-9]*
+.angular
+.ionic
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
