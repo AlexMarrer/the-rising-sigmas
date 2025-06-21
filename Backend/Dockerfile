@@ -1,11 +1,15 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
+# Copy project files first for better layer caching
 COPY ["RisingSigma/RisingSigma.API/RisingSigma.Api.csproj", "RisingSigma.API/"]
 COPY ["RisingSigma/RisingSigma.Database/RisingSigma.Database.csproj", "RisingSigma.Database/"]
+COPY ["RisingSigma/RisingSigma.sln", "./"]
 
+# Restore dependencies
 RUN dotnet restore "RisingSigma.API/RisingSigma.Api.csproj"
 
+# Copy source code (dockerignore excludes bin/obj)
 COPY RisingSigma/ .
 
 WORKDIR "/src/RisingSigma.API"

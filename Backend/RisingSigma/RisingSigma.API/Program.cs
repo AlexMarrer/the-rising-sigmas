@@ -16,7 +16,6 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.
-builder.Services.AddTransient<IVerificationLogic, VerificationLogic>();
 builder.Services.AddTransient<IExerciseLogic, ExerciseLogic>();
 builder.Services.AddControllers();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);

@@ -1,0 +1,40 @@
+# Build outputs
+**/bin/
+**/obj/
+**/out/
+**/publish/
+
+# Visual Studio
+**/.vs/
+**/.vscode/
+*.user
+*.suo
+
+# Logs
+**/*.log
+**/logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docker
+**/Dockerfile*
+**/docker-compose*
+**/.dockerignore
+
+# Testing
+**/TestResults/
+**/coverage/
+
+# NuGet
+**/packages/
+**/*.nupkg
+
+# Environment files
+**/.env
+**/.env.*
