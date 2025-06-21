@@ -35,6 +35,19 @@ The application follows a modern microservices architecture with the following c
   - Entity Framework Core migrations
   - Structured data storage for users, exercises, and training plans
 
+### Additional Container: Adminer (Database Management)
+
+- **Technology**: Adminer (phpMyAdmin alternative)
+- **Purpose**: Web-based database administration interface
+- **Communication**: Connects to the SQL Server database container
+- **Features**:
+  - Visual database exploration and management
+  - SQL query execution interface
+  - Database schema visualization
+  - Table data browsing and editing
+  - Import/Export functionality
+  - User-friendly alternative to command-line database access
+
 ## Project Structure
 
 ```
@@ -134,7 +147,27 @@ docker-compose -f docker-compose-build.yml down
 - Frontend (Ionic): http://localhost:${FRONTEND_PORT} (default: 8080)
 - Backend API: http://localhost:${API_PORT} (default: 5000)
 - Database: localhost:${DB_PORT} (default: 1433)
-- Adminer (Database UI): http://localhost:${ADMINER_PORT} (default: 8090)
+- **Adminer (Database Management UI)**: http://localhost:${ADMINER_PORT} (default: 8090)
+
+### Adminer Database Management
+
+The Adminer container provides a web-based interface for database management:
+
+**Connection Details for Adminer:**
+
+- **Server**: `database` (container name)
+- **Username**: `sa`
+- **Password**: Your `DB_PASSWORD` from `.env` file
+- **Database**: `RisingSigma` (or your custom `DB_NAME`)
+
+**Features available through Adminer:**
+
+- Browse database tables and their content
+- Execute custom SQL queries
+- View database schema and relationships
+- Export/Import database data
+- Manage database structure
+- Monitor database performance
 
 ### Option 2: Docker Hub Images
 
@@ -455,3 +488,17 @@ FRONTEND_PORT=3001   # Instead of default 8080
 DB_CONTAINER_NAME=my-custom-db
 BACKEND_CONTAINER_NAME=my-custom-api
 ```
+
+## Docker Hub Images
+
+All Docker images for this project are available on Docker Hub for easy deployment:
+
+**🐳 Docker Hub Repository:** [https://hub.docker.com/u/dukq](https://hub.docker.com/u/dukq)
+
+**Available Images:**
+
+- `dukq/rs-frontend:latest` - Ionic Angular Frontend
+- `dukq/rs-backend:latest` - .NET Core API Backend
+- `dukq/rs-database:latest` - SQL Server with schema setup
+
+These pre-built images allow you to run the entire application stack without needing to build from source. Simply use the `docker-compose-hub.yml` file with your own `.env` configuration.
