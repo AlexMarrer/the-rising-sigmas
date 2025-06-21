@@ -13,7 +13,7 @@ services:
     working_dir: /workspace
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://0.0.0.0:5000
+      - ASPNETCORE_URLS=http://+:5000
       - ConnectionStrings__Database=Server=database;Database=${DB_NAME:-RisingSigma};User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;
       - API_URL=http://localhost:5000
     command: sleep infinity
