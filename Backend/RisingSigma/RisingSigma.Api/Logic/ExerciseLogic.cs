@@ -252,7 +252,6 @@ public class ExerciseLogic : IExerciseLogic
         
         var daysSinceStart = (currentTime.Date - trainingStartTime.Date).Days;
         
-        // Handle negative days (current time before start time)
         if (daysSinceStart < 0)
         {
             return MIN_WEEK_NUMBER;
@@ -260,7 +259,6 @@ public class ExerciseLogic : IExerciseLogic
         
         var totalWeeksSinceStart = (daysSinceStart / DAYS_PER_WEEK) + MIN_WEEK_NUMBER;
         
-        // Apply cyclic rotation for weeks beyond the cycle length
         if (totalWeeksSinceStart > cycleWeeks)
         {
             return ((totalWeeksSinceStart - MIN_WEEK_NUMBER) % cycleWeeks) + MIN_WEEK_NUMBER;

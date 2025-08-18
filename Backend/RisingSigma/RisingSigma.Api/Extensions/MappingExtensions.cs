@@ -6,7 +6,6 @@ namespace RisingSigma.Api.Extensions;
 public static class MappingExtensions
 {    public static ExerciseDto ToDto(this Exercise entity)
     {
-        // Convert DayOfWeek enum to day integer (1=Monday, 2=Tuesday, ..., 7=Sunday)
         int day = entity.Day switch
         {
             DayOfWeek.Monday => 1,
@@ -16,7 +15,7 @@ public static class MappingExtensions
             DayOfWeek.Friday => 5,
             DayOfWeek.Saturday => 6,
             DayOfWeek.Sunday => 7,
-            _ => 1 // Default to Monday
+            _ => 1
         };
 
         return new ExerciseDto

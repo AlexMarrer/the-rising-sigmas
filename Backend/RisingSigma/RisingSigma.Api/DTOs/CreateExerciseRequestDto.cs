@@ -8,5 +8,5 @@ public class CreateExerciseRequestDto
     public int Day { get; set; }
     public string Notes { get; set; } = "";
     public Guid ExerciseTemplateId { get; set; }
-    public List<int> Days { get; set; } = new List<int>(); // For multiple days support
+    public List<int> Days { get; set; } = new List<int>();
 }
