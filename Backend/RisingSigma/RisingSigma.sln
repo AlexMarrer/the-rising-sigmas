@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RisingSigma.Api", "RisingSigma.API\RisingSigma.Api.csproj", "{913AD926-85B2-4471-9D7C-45D420686257}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RisingSigma.Api", "RisingSigma.Api\RisingSigma.Api.csproj", "{913AD926-85B2-4471-9D7C-45D420686257}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E4595153-2319-48CC-88D3-B8A6EEB60826} = {E4595153-2319-48CC-88D3-B8A6EEB60826}
 		{EA2D1E5C-9BA6-4F8F-A357-7E8B85FF365C} = {EA2D1E5C-9BA6-4F8F-A357-7E8B85FF365C}

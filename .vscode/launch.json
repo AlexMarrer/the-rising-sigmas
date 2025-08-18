@@ -6,9 +6,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/Backend/RisingSigma/RisingSigma.API/bin/Debug/net8.0/RisingSigma.Api.dll",
+      "program": "${workspaceFolder}/Backend/RisingSigma/RisingSigma.Api/bin/Debug/net8.0/RisingSigma.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/Backend/RisingSigma/RisingSigma.API",
+      "cwd": "${workspaceFolder}/Backend/RisingSigma/RisingSigma.Api",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",

@@ -25,7 +25,7 @@ A user-friendly alternative to Excel for creating and managing training plans.
 
 ```bash
 # Start Backend
-cd Backend/RisingSigma/RisingSigma.API
+cd Backend/RisingSigma/RisingSigma.Api
 dotnet run
 
 # Start Frontend
@@ -48,7 +48,7 @@ npm start
 ├── 🖥️  Backend/         # .NET Core API
 │   ├── Dockerfile       # Backend Container
 │   └── RisingSigma/     # .NET Solution
-│       ├── RisingSigma.API/     # REST API
+│       ├── RisingSigma.Api/     # REST API
 │       ├── RisingSigma.Database/ # Entity Framework
 │       └── RisingSigma.Api.Test/ # Unit Tests
 ├── 📱 IONIC/           # Angular/Ionic Frontend

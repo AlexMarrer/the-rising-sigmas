@@ -1,6 +1,0 @@
-@RisingSigma.API_HostAddress = http://localhost:5204
-
-GET {{RisingSigma.API_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

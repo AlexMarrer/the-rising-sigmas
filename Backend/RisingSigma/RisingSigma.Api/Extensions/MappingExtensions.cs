@@ -1,7 +1,7 @@
-using RisingSigma.API.DTOs;
+using RisingSigma.Api.DTOs;
 using RisingSigma.Database.Entities;
 
-namespace RisingSigma.API.Extensions;
+namespace RisingSigma.Api.Extensions;
 
 public static class MappingExtensions
 {    public static ExerciseDto ToDto(this Exercise entity)

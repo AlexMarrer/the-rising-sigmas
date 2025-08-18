@@ -54,7 +54,7 @@ The application follows a modern microservices architecture with the following c
 /
 ├── Backend/                     # .NET Core API
 │   └── RisingSigma/             # Solution folder
-│       ├── RisingSigma.API/     # Main API project
+│       ├── RisingSigma.Api/     # Main API project
 │       │   ├── Controllers/     # API controllers
 │       │   ├── Logic/           # Business logic layer
 │       │   └── Properties/      # Project properties
@@ -272,7 +272,7 @@ The development environment includes:
    dotnet restore
 
    # Run the API
-   dotnet run --project RisingSigma.API
+   dotnet run --project RisingSigma.Api
 
    # Or use the VS Code task: "watch"
    ```
@@ -298,10 +298,10 @@ The development environment includes:
    ```bash
    # Add new migration
    cd Backend/RisingSigma
-   dotnet ef migrations add MigrationName --project RisingSigma.Database --startup-project RisingSigma.API
+   dotnet ef migrations add MigrationName --project RisingSigma.Database --startup-project RisingSigma.Api
 
    # Update database
-   dotnet ef database update --project RisingSigma.Database --startup-project RisingSigma.API
+   dotnet ef database update --project RisingSigma.Database --startup-project RisingSigma.Api
    ```
 
 4. **Database Management with SQL Server Extension**
