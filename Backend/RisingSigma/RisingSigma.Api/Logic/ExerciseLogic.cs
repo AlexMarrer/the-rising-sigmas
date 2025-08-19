@@ -9,29 +9,23 @@ namespace RisingSigma.Api.Logic;
 
 public class ExerciseLogic : IExerciseLogic
 {
-    #region Constants
     private const int DEFAULT_CYCLE_WEEKS = 4;
     private const int DAYS_PER_WEEK = 7;
     private const int MIN_WEEK_NUMBER = 1;
     private const string DEFAULT_USER_ROLE = "DefaultUser";
     private const string DEFAULT_TRAINING_PLAN_NAME = "Default Training Plan";
     private const string DEFAULT_TRAINING_PLAN_DESCRIPTION = "Auto-generated default training plan";
-    #endregion
 
-    #region Fields
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly IConfiguration _configuration;
     private readonly ITimeProvider _timeProvider;
-    #endregion
 
-    #region Constructor
     public ExerciseLogic(ApplicationDbContext context, IConfiguration config, ITimeProvider timeProvider)
     {
         _applicationDbContext = context ?? throw new ArgumentNullException(nameof(context));
         _configuration = config ?? throw new ArgumentNullException(nameof(config));
         _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
     }
-    #endregion
 
     #region Public Methods
     
@@ -311,7 +305,9 @@ public class ExerciseLogic : IExerciseLogic
             .Include(e => e.WeekPlan)
             .Where(e => exerciseIds.Contains(e.Id))
             .ToListAsync();
-    }    public async Task<ExerciseDto> UpdateExerciseAsync(Guid id, UpdateExerciseRequestDto request)
+    }
+
+    public async Task<ExerciseDto> UpdateExerciseAsync(Guid id, UpdateExerciseRequestDto request)
     {
         var exercise = await _applicationDbContext.Exercise
             .Include(e => e.ExerciseTemplate)
@@ -329,7 +325,7 @@ public class ExerciseLogic : IExerciseLogic
         exercise.RPE = request.RPE;
         exercise.notes = request.Notes;
         exercise.ExerciseTemplateId = request.ExerciseTemplateId;
-        
+
         DayOfWeek dayOfWeek = request.Day switch
         {
             0 => DayOfWeek.Sunday,
