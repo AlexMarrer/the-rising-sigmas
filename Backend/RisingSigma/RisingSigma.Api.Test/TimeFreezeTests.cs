@@ -1,3 +1,4 @@
+
 using RisingSigma.Api.Test.Logic;
 using Xunit;
 
@@ -5,61 +6,52 @@ namespace RisingSigma.Api.Test;
 
 public class TimeFreezeTests
 {
+    private readonly ITimeFreezeVerificationLogic _verificationLogic;
+    
+    public TimeFreezeTests()
+    {
+        _verificationLogic = new TimeFreezeVerificationLogic();
+    }
     #region Basic Week Rotation Tests
 
     [Fact]
     public async Task Day0_Should_ReturnWeek1()
     {
-        var verificationLogic = new TimeFreezeVerificationLogic();
-        var weekPlan = await verificationLogic.CreateExerciseAtSpecificDay(0, "First day of program");
-        
-        var result = verificationLogic.VerifyWeekNumber(weekPlan, expectedWeek: 1, daysOffset: 0);
-        Assert.NotNull(result);
-        Assert.Equal(1, result.WeekNumber);
+        var weekPlan = await _verificationLogic.CreateExerciseAtSpecificDay(0, "First day of program");
+        Assert.NotNull(weekPlan);
+        Assert.Equal(1, weekPlan.WeekNumber);
     }
 
     [Fact]
     public async Task Day7_Should_ReturnWeek2()
     {
-        var verificationLogic = new TimeFreezeVerificationLogic();
-        var weekPlan = await verificationLogic.CreateExerciseAtSpecificDay(7, "Start of week 2");
-        
-        var result = verificationLogic.VerifyWeekNumber(weekPlan, expectedWeek: 2, daysOffset: 7);
-        Assert.NotNull(result);
-        Assert.Equal(2, result.WeekNumber);
+        var weekPlan = await _verificationLogic.CreateExerciseAtSpecificDay(7, "Start of week 2");
+        Assert.NotNull(weekPlan);
+        Assert.Equal(2, weekPlan.WeekNumber);
     }
 
     [Fact]
     public async Task Day14_Should_ReturnWeek3()
     {
-        var verificationLogic = new TimeFreezeVerificationLogic();
-        var weekPlan = await verificationLogic.CreateExerciseAtSpecificDay(14, "Start of week 3");
-        
-        var result = verificationLogic.VerifyWeekNumber(weekPlan, expectedWeek: 3, daysOffset: 14);
-        Assert.NotNull(result);
-        Assert.Equal(3, result.WeekNumber);
+        var weekPlan = await _verificationLogic.CreateExerciseAtSpecificDay(14, "Start of week 3");
+        Assert.NotNull(weekPlan);
+        Assert.Equal(3, weekPlan.WeekNumber);
     }
 
     [Fact]
     public async Task Day21_Should_ReturnWeek4()
     {
-        var verificationLogic = new TimeFreezeVerificationLogic();
-        var weekPlan = await verificationLogic.CreateExerciseAtSpecificDay(21, "Start of week 4");
-        
-        var result = verificationLogic.VerifyWeekNumber(weekPlan, expectedWeek: 4, daysOffset: 21);
-        Assert.NotNull(result);
-        Assert.Equal(4, result.WeekNumber);
+        var weekPlan = await _verificationLogic.CreateExerciseAtSpecificDay(21, "Start of week 4");
+        Assert.NotNull(weekPlan);
+        Assert.Equal(4, weekPlan.WeekNumber);
     }
 
     [Fact]
     public async Task Day28_CycleRestart_Should_ReturnWeek1()
     {
-        var verificationLogic = new TimeFreezeVerificationLogic();
-        var weekPlan = await verificationLogic.CreateExerciseAtSpecificDay(28, "4-week cycle restart");
-        
-        var result = verificationLogic.VerifyWeekNumber(weekPlan, expectedWeek: 1, daysOffset: 28);
-        Assert.NotNull(result);
-        Assert.Equal(1, result.WeekNumber);
+        var weekPlan = await _verificationLogic.CreateExerciseAtSpecificDay(28, "4-week cycle restart");
+        Assert.NotNull(weekPlan);
+        Assert.Equal(1, weekPlan.WeekNumber);
     }
 
     #endregion
@@ -93,14 +85,10 @@ public class TimeFreezeTests
     [MemberData(nameof(WeekRotationTestData))]
     public async Task VariousDaysOffset_Should_ReturnCorrectWeekNumber(int daysOffset, int expectedWeek, string description)
     {
-        var verificationLogic = new TimeFreezeVerificationLogic();
-        var weekPlan = await verificationLogic.CreateExerciseAtSpecificDay(daysOffset, description);
-        
-        var result = verificationLogic.VerifyWeekNumber(weekPlan, expectedWeek, daysOffset);
-        Assert.NotNull(result);
-        Assert.Equal(expectedWeek, result.WeekNumber);
-        
-        Assert.True(verificationLogic.VerifyWeekCalculation(daysOffset, expectedWeek));
+        var weekPlan = await _verificationLogic.CreateExerciseAtSpecificDay(daysOffset, description);
+        Assert.NotNull(weekPlan);
+        Assert.Equal(expectedWeek, weekPlan.WeekNumber);
+        Assert.True(_verificationLogic.VerifyWeekCalculation(daysOffset, expectedWeek));
     }
 
     #endregion
@@ -110,9 +98,7 @@ public class TimeFreezeTests
     [Fact]
     public async Task MultipleExercisesSameWeek_Should_ShareWeekPlan()
     {
-        var verificationLogic = new TimeFreezeVerificationLogic();
-        var (success, weekPlansCount, exercisesCount) = await verificationLogic.VerifyMultipleExercisesSameWeek();
-        
+        var (success, weekPlansCount, exercisesCount) = await _verificationLogic.VerifyMultipleExercisesSameWeek();
         Assert.True(success);
         Assert.Equal(1, weekPlansCount);
         Assert.Equal(2, exercisesCount);
@@ -121,9 +107,7 @@ public class TimeFreezeTests
     [Fact]
     public async Task MidnightBoundaryWeekTransition_Should_ReturnCorrectWeek()
     {
-        var verificationLogic = new TimeFreezeVerificationLogic();
-        var (week1Success, week2Success) = await verificationLogic.VerifyWeekBoundaryTransition();
-        
+        var (week1Success, week2Success) = await _verificationLogic.VerifyWeekBoundaryTransition();
         Assert.True(week1Success);
         Assert.True(week2Success);
     }
@@ -131,9 +115,7 @@ public class TimeFreezeTests
     [Fact]
     public async Task NegativeDaysOffset_Should_HandleGracefully()
     {
-        var verificationLogic = new TimeFreezeVerificationLogic();
-        var weekNumber = await verificationLogic.VerifyNegativeDaysHandling();
-        
+        var weekNumber = await _verificationLogic.VerifyNegativeDaysHandling();
         Assert.Equal(1, weekNumber);
     }
 
@@ -144,11 +126,10 @@ public class TimeFreezeTests
     [Fact]
     public void WeekCalculationFormula_Should_BeCorrect()
     {
-        var verificationLogic = new TimeFreezeVerificationLogic();
-        var (success, failureReason) = verificationLogic.VerifyMathematicalFormula();
-        
+        var (success, failureReason) = _verificationLogic.VerifyMathematicalFormula();
         Assert.True(success, failureReason ?? "Mathematical formula verification failed");
     }
 
     #endregion
 }
+

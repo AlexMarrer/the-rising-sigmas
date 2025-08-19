@@ -43,14 +43,6 @@ public class TimeFreezeVerificationLogic : ITimeFreezeVerificationLogic
         return _dbContext.WeekPlan.FirstOrDefault();
     }
 
-    public WeekPlan VerifyWeekNumber(WeekPlan? weekPlan, int expectedWeek, int daysOffset)
-    {
-        if (weekPlan == null)
-            throw new ArgumentNullException(nameof(weekPlan), "WeekPlan should not be null");
-
-        return weekPlan;
-    }
-
     public bool VerifyWeekCalculation(int daysOffset, int expectedWeek)
     {
         var calculatedWeek = ((daysOffset / DAYS_PER_WEEK) % CYCLE_WEEKS) + 1;
