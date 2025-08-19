@@ -1,4 +1,4 @@
-﻿using RisingSigma.API.DTOs;
+﻿using RisingSigma.Api.DTOs;
 
 namespace RisingSigma.Api.Logic;
 

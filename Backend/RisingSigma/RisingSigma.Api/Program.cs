@@ -17,6 +17,7 @@ builder.Services.AddCors(options =>
 
 // Add services to the container.
 builder.Services.AddTransient<IExerciseLogic, ExerciseLogic>();
+builder.Services.AddSingleton<ITimeProvider, SystemTimeProvider>();
 builder.Services.AddControllers();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 

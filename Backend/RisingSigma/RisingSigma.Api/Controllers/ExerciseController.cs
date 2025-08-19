@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using RisingSigma.Api.Logic;
-using RisingSigma.API.DTOs;
+using RisingSigma.Api.DTOs;
 
-namespace RisingSigma.API.Controllers
+namespace RisingSigma.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

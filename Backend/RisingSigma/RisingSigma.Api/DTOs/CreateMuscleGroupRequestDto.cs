@@ -1,4 +1,4 @@
-namespace RisingSigma.API.DTOs;
+namespace RisingSigma.Api.DTOs;
 
 public class CreateMuscleGroupRequestDto
 {

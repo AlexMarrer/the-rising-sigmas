@@ -1,22 +1,34 @@
 using Microsoft.EntityFrameworkCore;
 using RisingSigma.Database;
 using RisingSigma.Database.Entities;
-using RisingSigma.API.DTOs;
-using RisingSigma.API.Extensions;
+using RisingSigma.Api.DTOs;
+using RisingSigma.Api.Extensions;
+using System;
 
 namespace RisingSigma.Api.Logic;
 
 public class ExerciseLogic : IExerciseLogic
 {
+    private const int DEFAULT_CYCLE_WEEKS = 4;
+    private const int DAYS_PER_WEEK = 7;
+    private const int MIN_WEEK_NUMBER = 1;
+    private const string DEFAULT_USER_ROLE = "DefaultUser";
+    private const string DEFAULT_TRAINING_PLAN_NAME = "Default Training Plan";
+    private const string DEFAULT_TRAINING_PLAN_DESCRIPTION = "Auto-generated default training plan";
+
     private readonly ApplicationDbContext _applicationDbContext;
     private readonly IConfiguration _configuration;
+    private readonly ITimeProvider _timeProvider;
 
-    public ExerciseLogic(ApplicationDbContext applicationDbContext, IConfiguration configuration)
+    public ExerciseLogic(ApplicationDbContext context, IConfiguration config, ITimeProvider timeProvider)
     {
-        this._applicationDbContext = applicationDbContext;
-        this._configuration = configuration;
+        _applicationDbContext = context ?? throw new ArgumentNullException(nameof(context));
+        _configuration = config ?? throw new ArgumentNullException(nameof(config));
+        _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
     }
 
+    #region Public Methods
+    
     public async Task<IEnumerable<ExerciseDto>> GetAllExercisesAsync()
     {
         var exercises = await _applicationDbContext.Exercise
@@ -41,18 +53,20 @@ public class ExerciseLogic : IExerciseLogic
     {
         var muscleGroups = await _applicationDbContext.MuscleGroup.ToListAsync();
         return muscleGroups.Select(mg => mg.ToDto());
-    }    public async Task<CreateExerciseResponseDto> CreateExerciseAsync(CreateExerciseRequestDto request)
-    {
-        // Get or create default week plan (week 1)
-        var weekPlan = await GetOrCreateDefaultWeekPlan();
+    }
 
+    public async Task<CreateExerciseResponseDto> CreateExerciseAsync(CreateExerciseRequestDto request)
+    {
+        ValidateCreateExerciseRequest(request);
+        
+        var weekPlan = await GetOrCreateDefaultWeekPlan();
         var exercises = new List<Exercise>();
 
-        // Use selected days if any, otherwise use the single day
         var daysToCreate = request.Days?.Any() == true ? request.Days : new List<int> { request.Day };
 
         foreach (var day in daysToCreate)
         {
+            ValidateDayNumber(day);
             var exercise = request.ToEntity(request.ExerciseTemplateId, weekPlan.Id, day);
             exercises.Add(exercise);
         }
@@ -60,14 +74,7 @@ public class ExerciseLogic : IExerciseLogic
         _applicationDbContext.Exercise.AddRange(exercises);
         await _applicationDbContext.SaveChangesAsync();
 
-        // Return exercises with includes
-        var exerciseIds = exercises.Select(e => e.Id).ToList();
-        var savedExercises = await _applicationDbContext.Exercise
-            .Include(e => e.ExerciseTemplate)
-            .ThenInclude(et => et!.MuscleGroup)
-            .Include(e => e.WeekPlan)
-            .Where(e => exerciseIds.Contains(e.Id))
-            .ToListAsync();
+        var savedExercises = await GetSavedExercisesWithIncludes(exercises.Select(e => e.Id).ToList());
 
         return new CreateExerciseResponseDto
         {
@@ -81,14 +88,12 @@ public class ExerciseLogic : IExerciseLogic
     {
         Guid muscleGroupId;
 
-        // Check if we need to create a new muscle group
         if (request.MuscleGroupId.HasValue)
         {
             muscleGroupId = request.MuscleGroupId.Value;
         }
         else if (!string.IsNullOrEmpty(request.MuscleGroupName))
         {
-            // Create new muscle group
             var newMuscleGroup = new MuscleGroup
             {
                 Id = Guid.NewGuid(),
@@ -109,7 +114,6 @@ public class ExerciseLogic : IExerciseLogic
         _applicationDbContext.ExerciseTemplate.Add(template);
         await _applicationDbContext.SaveChangesAsync();
 
-        // Return template with includes
         var result = await _applicationDbContext.ExerciseTemplate
             .Include(et => et.MuscleGroup)
             .FirstOrDefaultAsync(et => et.Id == template.Id);
@@ -129,13 +133,11 @@ public class ExerciseLogic : IExerciseLogic
 
     public async Task SeedDataAsync()
     {
-        // Check if data already exists
         if (await _applicationDbContext.MuscleGroup.AnyAsync())
         {
-            return; // Data already seeded
+            return;
         }
 
-        // Create muscle groups
         var muscleGroups = new[]
         {
             new MuscleGroup { Id = Guid.NewGuid(), Name = "Brust" },
@@ -148,7 +150,6 @@ public class ExerciseLogic : IExerciseLogic
 
         _applicationDbContext.MuscleGroup.AddRange(muscleGroups);
 
-        // Create exercise templates
         var exerciseTemplates = new[]
         {
             new ExerciseTemplate { Id = Guid.NewGuid(), Name = "Bankdrücken", MuscleGroupId = muscleGroups[0].Id },
@@ -170,50 +171,19 @@ public class ExerciseLogic : IExerciseLogic
         await _applicationDbContext.SaveChangesAsync();
     }    private async Task<WeekPlan> GetOrCreateDefaultWeekPlan()
     {
-        var weekPlan = await _applicationDbContext.WeekPlan.FirstOrDefaultAsync();
+        var trainingPlan = await GetOrCreateDefaultTrainingPlan();
+        var currentWeekNumber = CalculateCurrentWeekNumber(trainingPlan.StartTime, _timeProvider.UtcNow, trainingPlan.CycleWeeks);
+        
+        var weekPlan = await _applicationDbContext.WeekPlan
+            .Where(wp => wp.TrainingPlanId == trainingPlan.Id && wp.WeekNumber == currentWeekNumber)
+            .FirstOrDefaultAsync();
 
         if (weekPlan == null)
         {
-            // First, ensure we have a default user
-            var user = await _applicationDbContext.User.FirstOrDefaultAsync();
-            
-            if (user == null)
-            {
-                // Create a default user
-                user = new User
-                {
-                    Id = Guid.NewGuid(),
-                    Role = "DefaultUser"
-                };
-                
-                _applicationDbContext.User.Add(user);
-                await _applicationDbContext.SaveChangesAsync();
-            }
-
-            // Then, ensure we have a default training plan
-            var trainingPlan = await _applicationDbContext.TrainingPlan.FirstOrDefaultAsync();
-            
-            if (trainingPlan == null)
-            {
-                // Create a default training plan
-                trainingPlan = new TrainingPlan
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Default Training Plan",
-                    Description = "Auto-generated default training plan",
-                    StartTime = DateTime.UtcNow,
-                    CycleWeeks = 4,
-                    UserId = user.Id // Reference the existing user
-                };
-                
-                _applicationDbContext.TrainingPlan.Add(trainingPlan);
-                await _applicationDbContext.SaveChangesAsync();
-            }
-
             weekPlan = new WeekPlan
             {
                 Id = Guid.NewGuid(),
-                WeekNumber = 1,
+                WeekNumber = currentWeekNumber,
                 Version = 1,
                 TrainingPlanId = trainingPlan.Id
             };
@@ -223,7 +193,121 @@ public class ExerciseLogic : IExerciseLogic
         }
 
         return weekPlan;
-    }    public async Task<ExerciseDto> UpdateExerciseAsync(Guid id, UpdateExerciseRequestDto request)
+    }
+
+    private async Task<TrainingPlan> GetOrCreateDefaultTrainingPlan()
+    {
+        var trainingPlan = await _applicationDbContext.TrainingPlan.FirstOrDefaultAsync();
+        
+        if (trainingPlan == null)
+        {
+            var user = await _applicationDbContext.User.FirstOrDefaultAsync();
+            
+            if (user == null)
+            {
+                user = new User
+                {
+                    Id = Guid.NewGuid(),
+                    Role = DEFAULT_USER_ROLE
+                };
+                
+                _applicationDbContext.User.Add(user);
+                await _applicationDbContext.SaveChangesAsync();
+            }
+
+            trainingPlan = new TrainingPlan
+            {
+                Id = Guid.NewGuid(),
+                Name = DEFAULT_TRAINING_PLAN_NAME,
+                Description = DEFAULT_TRAINING_PLAN_DESCRIPTION,
+                StartTime = _timeProvider.UtcNow,
+                CycleWeeks = DEFAULT_CYCLE_WEEKS,
+                UserId = user.Id
+            };
+            
+            _applicationDbContext.TrainingPlan.Add(trainingPlan);
+            await _applicationDbContext.SaveChangesAsync();
+        }
+
+        return trainingPlan;
+    }
+
+    /// <summary>
+    /// Calculates the current week number based on training start time and cycle configuration.
+    /// Implements a robust 4-week cycling algorithm with proper boundary handling.
+    /// </summary>
+    /// <param name="trainingStartTime">The start date of the training plan</param>
+    /// <param name="currentTime">The current date/time</param>
+    /// <param name="cycleWeeks">Number of weeks in one training cycle</param>
+    /// <returns>Week number (1-based) within the current cycle</returns>
+    private int CalculateCurrentWeekNumber(DateTime trainingStartTime, DateTime currentTime, int cycleWeeks)
+    {
+        ValidateCalculationInputs(trainingStartTime, currentTime, cycleWeeks);
+        
+        var daysSinceStart = (currentTime.Date - trainingStartTime.Date).Days;
+        
+        if (daysSinceStart < 0)
+        {
+            return MIN_WEEK_NUMBER;
+        }
+        
+        var totalWeeksSinceStart = (daysSinceStart / DAYS_PER_WEEK) + MIN_WEEK_NUMBER;
+        
+        if (totalWeeksSinceStart > cycleWeeks)
+        {
+            return ((totalWeeksSinceStart - MIN_WEEK_NUMBER) % cycleWeeks) + MIN_WEEK_NUMBER;
+        }
+        
+        return totalWeeksSinceStart;
+    }
+    #endregion
+
+    #region Validation Methods
+    
+    private static void ValidateCreateExerciseRequest(CreateExerciseRequestDto request)
+    {
+        if (request == null)
+            throw new ArgumentNullException(nameof(request));
+            
+        if (request.Reps <= 0)
+            throw new ArgumentException("Reps must be greater than 0", nameof(request.Reps));
+            
+        if (request.Sets <= 0)
+            throw new ArgumentException("Sets must be greater than 0", nameof(request.Sets));
+            
+        if (request.RPE < 0 || request.RPE > 10)
+            throw new ArgumentException("RPE must be between 0 and 10", nameof(request.RPE));
+    }
+    
+    private static void ValidateDayNumber(int day)
+    {
+        if (day < 0 || day > 6)
+            throw new ArgumentException($"Day must be between 0 and 6, but was {day}", nameof(day));
+    }
+    
+    private static void ValidateCalculationInputs(DateTime trainingStartTime, DateTime currentTime, int cycleWeeks)
+    {
+        if (cycleWeeks <= 0)
+            throw new ArgumentException("Cycle weeks must be greater than 0", nameof(cycleWeeks));
+            
+        if (trainingStartTime.Kind != DateTimeKind.Utc || currentTime.Kind != DateTimeKind.Utc)
+            throw new ArgumentException("All DateTime parameters must be in UTC");
+    }
+    #endregion
+    
+    #region Helper Methods
+    
+    private async Task<List<Exercise>> GetSavedExercisesWithIncludes(List<Guid> exerciseIds)
+    {
+        return await _applicationDbContext.Exercise
+            .Include(e => e.ExerciseTemplate)
+            .ThenInclude(et => et!.MuscleGroup)
+            .Include(e => e.WeekPlan)
+            .Where(e => exerciseIds.Contains(e.Id))
+            .ToListAsync();
+    }
+
+    public async Task<ExerciseDto> UpdateExerciseAsync(Guid id, UpdateExerciseRequestDto request)
     {
         var exercise = await _applicationDbContext.Exercise
             .Include(e => e.ExerciseTemplate)
@@ -236,12 +320,12 @@ public class ExerciseLogic : IExerciseLogic
             throw new ArgumentException($"Exercise with ID {id} not found");
         }
 
-        // Update exercise properties
         exercise.Reps = request.Reps;
         exercise.Sets = request.Sets;
         exercise.RPE = request.RPE;
         exercise.notes = request.Notes;
-        exercise.ExerciseTemplateId = request.ExerciseTemplateId;        // Convert day integer to DayOfWeek enum (same logic as in CreateExercise)  
+        exercise.ExerciseTemplateId = request.ExerciseTemplateId;
+
         DayOfWeek dayOfWeek = request.Day switch
         {
             0 => DayOfWeek.Sunday,
@@ -262,26 +346,22 @@ public class ExerciseLogic : IExerciseLogic
 
     public async Task ClearAllTrainingDataAsync()
     {
-        // Delete all exercises first (due to foreign key constraints)
         var exercises = await _applicationDbContext.Exercise.ToListAsync();
         _applicationDbContext.Exercise.RemoveRange(exercises);
 
-        // Delete all exercise templates
         var exerciseTemplates = await _applicationDbContext.ExerciseTemplate.ToListAsync();
         _applicationDbContext.ExerciseTemplate.RemoveRange(exerciseTemplates);
 
-        // Delete all muscle groups
         var muscleGroups = await _applicationDbContext.MuscleGroup.ToListAsync();
         _applicationDbContext.MuscleGroup.RemoveRange(muscleGroups);
 
-        // Delete all week plans
         var weekPlans = await _applicationDbContext.WeekPlan.ToListAsync();
         _applicationDbContext.WeekPlan.RemoveRange(weekPlans);
 
-        // Delete all training plans
         var trainingPlans = await _applicationDbContext.TrainingPlan.ToListAsync();
         _applicationDbContext.TrainingPlan.RemoveRange(trainingPlans);
 
         await _applicationDbContext.SaveChangesAsync();
     }
+    #endregion
 }
