@@ -1,10 +1,5 @@
-// Moved/renamed from ExerciseLogicUpdateExerciseTests.cs to align filename with class name.
-using System;
-using System.Threading.Tasks;
-using Xunit;
 using RisingSigma.Api.DTOs;
 using RisingSigma.Api.Test.Logic;
-using RisingSigma.Database.Entities;
 
 namespace RisingSigma.Api.Test.Tests;
 

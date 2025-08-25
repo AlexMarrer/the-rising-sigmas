@@ -1,5 +1,3 @@
-using System;
-using Xunit;
 using RisingSigma.Api.Logic;
 
 namespace RisingSigma.Api.Test.Tests;

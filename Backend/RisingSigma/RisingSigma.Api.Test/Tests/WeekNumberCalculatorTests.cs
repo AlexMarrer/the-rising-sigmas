@@ -1,6 +1,7 @@
-using System;
-using Xunit;
 using RisingSigma.Api.Logic;
+using System;
+using System.Globalization;
+using Xunit;
 
 namespace RisingSigma.Api.Test.Tests;
 
@@ -24,8 +25,13 @@ public class WeekNumberCalculatorTests
   [InlineData("2025-01-01", "2025-01-22", 4, 4)] // 21 days diff -> week 4
   public void FirstCycleWeeks(string start, string current, int cycleWeeks, int expected)
   {
-    var startUtc = DateTime.SpecifyKind(DateTime.Parse(start), DateTimeKind.Utc);
-    var currentUtc = DateTime.SpecifyKind(DateTime.Parse(current), DateTimeKind.Utc);
+    var startUtc = DateTime.SpecifyKind(
+        DateTime.Parse(start, CultureInfo.InvariantCulture),
+        DateTimeKind.Utc);
+    var currentUtc = DateTime.SpecifyKind(
+        DateTime.Parse(current, CultureInfo.InvariantCulture),
+        DateTimeKind.Utc);
+
     var result = WeekNumberCalculator.Calculate(startUtc, currentUtc, cycleWeeks);
     Assert.Equal(expected, result);
   }
