@@ -1,4 +1,4 @@
-name: Build and deploy ASP.Net Core app to Azure Web App - rs-gymplan-api-dev
+name: Build & Test API (no deploy)
 
 on:
   push:
@@ -7,65 +7,33 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build_test:
     runs-on: windows-latest
-
     steps:
-      # 1. Code auschecken
       - name: Check out code
         uses: actions/checkout@v4
-
-      # 2. .NET Core Setup
-      - name: Set up .NET Core
+      - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.x"
-
-      # 3. Restore
-      - name: Restore dependencies
+      - name: Restore
         run: dotnet restore ./Backend/RisingSigma/RisingSigma.Api/RisingSigma.Api.csproj
-
-      # 4. Build
-      - name: Build the project
+      - name: Build
         run: dotnet build --configuration Release ./Backend/RisingSigma/RisingSigma.Api/RisingSigma.Api.csproj
-
-      # 5. Publish
-      - name: Publish the app
-        run: dotnet publish -c Release -o ./publish ./Backend/RisingSigma/RisingSigma.Api/RisingSigma.Api.csproj
-
-      - name: Upload build files
+      - name: Test
+        run: dotnet test ./Backend/RisingSigma/RisingSigma.sln --configuration Release --no-build --logger "trx;LogFileName=test-results.trx" --collect "XPlat Code Coverage"
+      - name: Upload test & coverage artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: c-sharp-build
+          name: api-test-results
+          path: |
+            **/TestResults/*.trx
+            **/TestResults/*/coverage.cobertura.xml
+      - name: Publish (artifact only)
+        run: dotnet publish -c Release -o ./publish ./Backend/RisingSigma/RisingSigma.Api/RisingSigma.Api.csproj
+      - name: Upload publish output
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-publish
           path: ./publish
-
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: "Production"
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
-
-    steps:
-      - name: Download build files
-        uses: actions/download-artifact@v4
-        with:
-          name: c-sharp-build
-          path: ./publish
-
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_AE1CBC7773A344C48458937B411B032D }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_09601B297F7D4AD1B5B7025275A5E073 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_BA95811AFB87474B8EBC1BDFBF7390C2 }}
-
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: "rs-gymplan-api-dev"
-          slot-name: "Production"
-          package: "./publish"

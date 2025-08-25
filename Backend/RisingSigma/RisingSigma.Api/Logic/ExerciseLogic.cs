@@ -10,8 +10,6 @@ namespace RisingSigma.Api.Logic;
 public class ExerciseLogic : IExerciseLogic
 {
     private const int DEFAULT_CYCLE_WEEKS = 4;
-    private const int DAYS_PER_WEEK = 7;
-    private const int MIN_WEEK_NUMBER = 1;
     private const string DEFAULT_USER_ROLE = "DefaultUser";
     private const string DEFAULT_TRAINING_PLAN_NAME = "Default Training Plan";
     private const string DEFAULT_TRAINING_PLAN_DESCRIPTION = "Auto-generated default training plan";
@@ -28,7 +26,7 @@ public class ExerciseLogic : IExerciseLogic
     }
 
     #region Public Methods
-    
+
     public async Task<IEnumerable<ExerciseDto>> GetAllExercisesAsync()
     {
         var exercises = await _applicationDbContext.Exercise
@@ -58,7 +56,7 @@ public class ExerciseLogic : IExerciseLogic
     public async Task<CreateExerciseResponseDto> CreateExerciseAsync(CreateExerciseRequestDto request)
     {
         ValidateCreateExerciseRequest(request);
-        
+
         var weekPlan = await GetOrCreateDefaultWeekPlan();
         var exercises = new List<Exercise>();
 
@@ -169,11 +167,12 @@ public class ExerciseLogic : IExerciseLogic
         _applicationDbContext.ExerciseTemplate.AddRange(exerciseTemplates);
 
         await _applicationDbContext.SaveChangesAsync();
-    }    private async Task<WeekPlan> GetOrCreateDefaultWeekPlan()
+    }
+    private async Task<WeekPlan> GetOrCreateDefaultWeekPlan()
     {
         var trainingPlan = await GetOrCreateDefaultTrainingPlan();
         var currentWeekNumber = CalculateCurrentWeekNumber(trainingPlan.StartTime, _timeProvider.UtcNow, trainingPlan.CycleWeeks);
-        
+
         var weekPlan = await _applicationDbContext.WeekPlan
             .Where(wp => wp.TrainingPlanId == trainingPlan.Id && wp.WeekNumber == currentWeekNumber)
             .FirstOrDefaultAsync();
@@ -198,11 +197,11 @@ public class ExerciseLogic : IExerciseLogic
     private async Task<TrainingPlan> GetOrCreateDefaultTrainingPlan()
     {
         var trainingPlan = await _applicationDbContext.TrainingPlan.FirstOrDefaultAsync();
-        
+
         if (trainingPlan == null)
         {
             var user = await _applicationDbContext.User.FirstOrDefaultAsync();
-            
+
             if (user == null)
             {
                 user = new User
@@ -210,7 +209,7 @@ public class ExerciseLogic : IExerciseLogic
                     Id = Guid.NewGuid(),
                     Role = DEFAULT_USER_ROLE
                 };
-                
+
                 _applicationDbContext.User.Add(user);
                 await _applicationDbContext.SaveChangesAsync();
             }
@@ -224,7 +223,7 @@ public class ExerciseLogic : IExerciseLogic
                 CycleWeeks = DEFAULT_CYCLE_WEEKS,
                 UserId = user.Id
             };
-            
+
             _applicationDbContext.TrainingPlan.Add(trainingPlan);
             await _applicationDbContext.SaveChangesAsync();
         }
@@ -234,69 +233,50 @@ public class ExerciseLogic : IExerciseLogic
 
     /// <summary>
     /// Calculates the current week number based on training start time and cycle configuration.
-    /// Implements a robust 4-week cycling algorithm with proper boundary handling.
+    /// Delegates to WeekNumberCalculator (single source of truth) after input validation.
     /// </summary>
-    /// <param name="trainingStartTime">The start date of the training plan</param>
-    /// <param name="currentTime">The current date/time</param>
-    /// <param name="cycleWeeks">Number of weeks in one training cycle</param>
-    /// <returns>Week number (1-based) within the current cycle</returns>
     private int CalculateCurrentWeekNumber(DateTime trainingStartTime, DateTime currentTime, int cycleWeeks)
     {
         ValidateCalculationInputs(trainingStartTime, currentTime, cycleWeeks);
-        
-        var daysSinceStart = (currentTime.Date - trainingStartTime.Date).Days;
-        
-        if (daysSinceStart < 0)
-        {
-            return MIN_WEEK_NUMBER;
-        }
-        
-        var totalWeeksSinceStart = (daysSinceStart / DAYS_PER_WEEK) + MIN_WEEK_NUMBER;
-        
-        if (totalWeeksSinceStart > cycleWeeks)
-        {
-            return ((totalWeeksSinceStart - MIN_WEEK_NUMBER) % cycleWeeks) + MIN_WEEK_NUMBER;
-        }
-        
-        return totalWeeksSinceStart;
+        return WeekNumberCalculator.Calculate(trainingStartTime, currentTime, cycleWeeks);
     }
     #endregion
 
     #region Validation Methods
-    
+
     private static void ValidateCreateExerciseRequest(CreateExerciseRequestDto request)
     {
         if (request == null)
             throw new ArgumentNullException(nameof(request));
-            
+
         if (request.Reps <= 0)
             throw new ArgumentException("Reps must be greater than 0", nameof(request.Reps));
-            
+
         if (request.Sets <= 0)
             throw new ArgumentException("Sets must be greater than 0", nameof(request.Sets));
-            
+
         if (request.RPE < 0 || request.RPE > 10)
             throw new ArgumentException("RPE must be between 0 and 10", nameof(request.RPE));
     }
-    
+
     private static void ValidateDayNumber(int day)
     {
         if (day < 0 || day > 6)
             throw new ArgumentException($"Day must be between 0 and 6, but was {day}", nameof(day));
     }
-    
+
     private static void ValidateCalculationInputs(DateTime trainingStartTime, DateTime currentTime, int cycleWeeks)
     {
         if (cycleWeeks <= 0)
             throw new ArgumentException("Cycle weeks must be greater than 0", nameof(cycleWeeks));
-            
+
         if (trainingStartTime.Kind != DateTimeKind.Utc || currentTime.Kind != DateTimeKind.Utc)
             throw new ArgumentException("All DateTime parameters must be in UTC");
     }
     #endregion
-    
+
     #region Helper Methods
-    
+
     private async Task<List<Exercise>> GetSavedExercisesWithIncludes(List<Guid> exerciseIds)
     {
         return await _applicationDbContext.Exercise
@@ -309,6 +289,12 @@ public class ExerciseLogic : IExerciseLogic
 
     public async Task<ExerciseDto> UpdateExerciseAsync(Guid id, UpdateExerciseRequestDto request)
     {
+        // Validate RPE is between 0-10 (Rate of Perceived Exertion standard)
+        if (request.RPE < 0 || request.RPE > 10)
+        {
+            throw new ArgumentException($"RPE must be between 0 and 10, but was {request.RPE}");
+        }
+
         var exercise = await _applicationDbContext.Exercise
             .Include(e => e.ExerciseTemplate)
             .ThenInclude(et => et!.MuscleGroup)

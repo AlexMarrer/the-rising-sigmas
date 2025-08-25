@@ -1,4 +1,4 @@
-name: Build and deploy WEB
+name: Build WEB (no deploy)
 
 on:
   push:
@@ -12,57 +12,22 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "20.x"
           cache: "npm"
           cache-dependency-path: "IONIC/package-lock.json"
-
       - name: Install dependencies
         working-directory: ./IONIC
         run: |
           npm ci
           npm install -g @ionic/cli
-
       - name: Build the app
         working-directory: ./IONIC
-        run: ionic build --configuration=production -- --base-href=https://rs-gymplan-web-dev.azurewebsites.net/ --deploy-url=https://rs-gymplan-web-dev.azurewebsites.net/
-
+        run: ionic build --configuration=production
       - name: Upload build files
         uses: actions/upload-artifact@v4
         with:
           name: ionic-build
           path: IONIC/www
-
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
-    permissions:
-      id-token: write
-
-    steps:
-      - name: Download build files
-        uses: actions/download-artifact@v4
-        with:
-          name: ionic-build
-          path: IONIC/www
-
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_B479A2E2ED4941A2BAE3C6063A6BAAC8 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A5A6B4529E4E462D9FD04C6C60AAAAC2 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_479FB58E0AB04E67837847F20E6F3BCE }}
-
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: "rs-gymplan-web-dev"
-          package: "IONIC/www"

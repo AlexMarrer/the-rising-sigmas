@@ -1,8 +1,7 @@
-
 using RisingSigma.Api.Test.Logic;
 using Xunit;
 
-namespace RisingSigma.Api.Test;
+namespace RisingSigma.Api.Test.Tests;
 
 public class TimeFreezeTests
 {

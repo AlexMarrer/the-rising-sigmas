@@ -20,4 +20,7 @@
 	<ProjectReference Include="..\RisingSigma.Database\RisingSigma.Database.csproj" />
   </ItemGroup>
 	
+  <ItemGroup>
+    <InternalsVisibleTo Include="RisingSigma.Api.Test" />
+  </ItemGroup>
 </Project>
