@@ -1,0 +1,65 @@
+name: CI - PR & Push Validation
+
+on:
+  pull_request:
+    branches: [main, develop, feature/**]
+  push:
+    branches: [develop, feature/**]
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.x"
+      - name: Restore solution
+        run: dotnet restore ./Backend/RisingSigma/RisingSigma.sln
+      - name: Build solution
+        run: dotnet build ./Backend/RisingSigma/RisingSigma.sln --configuration Release --no-restore
+      - name: Test (with coverage)
+        run: dotnet test ./Backend/RisingSigma/RisingSigma.sln --configuration Release --logger "trx;LogFileName=test-results.trx" --collect "XPlat Code Coverage"
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-tests
+          path: |
+            **/TestResults/*.trx
+            **/TestResults/*/coverage.cobertura.xml
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20.x"
+          cache: "npm"
+          cache-dependency-path: "IONIC/package-lock.json"
+      - name: Install deps
+        working-directory: IONIC
+        run: npm ci
+      - name: Lint
+        working-directory: IONIC
+        run: |
+          if [ -f package.json ] && jq -e '.scripts.lint' package.json > /dev/null; then npm run lint; else echo 'No lint script'; fi
+      - name: Build (no deploy)
+        working-directory: IONIC
+        run: npm run build --if-present || ionic build --configuration=production
+      - name: Upload web build
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: IONIC/www
+
+  summary:
+    needs: [backend-tests, frontend-build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mark success
+        run: echo "CI validation complete."
