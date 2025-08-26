@@ -13,18 +13,23 @@ public class TimeFreezeVerificationLogic : ITimeFreezeVerificationLogic
     private const int CYCLE_WEEKS = 4;
     private const int DAYS_PER_WEEK = 7;
     private static readonly DateTime BASE_START_DATE = new DateTime(2025, 8, 18, 6, 0, 0, DateTimeKind.Utc);
-    
+
     private readonly ApplicationDbContext _dbContext;
     private readonly Mock<IConfiguration> _configurationMock;
     private readonly Mock<ITimeProvider> _timeProviderMock;
     private readonly ExerciseLogic _exerciseLogic;
+    private Guid _exerciseTemplateId; // valid FK target for created exercises
 
     public TimeFreezeVerificationLogic()
     {
+        var connection = new Microsoft.Data.Sqlite.SqliteConnection("Data Source=:memory:");
+        connection.Open();
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .UseSqlite(connection)
+            .EnableSensitiveDataLogging()
             .Options;
         _dbContext = new ApplicationDbContext(options);
+        _dbContext.Database.EnsureCreated();
 
         _configurationMock = new Mock<IConfiguration>();
         _timeProviderMock = new Mock<ITimeProvider>();
@@ -63,8 +68,8 @@ public class TimeFreezeVerificationLogic : ITimeFreezeVerificationLogic
         var weekPlans = _dbContext.WeekPlan.ToList();
         var exercises = _dbContext.Exercise.ToList();
 
-        bool success = weekPlans.Count == 1 && 
-                       weekPlans.First().WeekNumber == 1 && 
+        bool success = weekPlans.Count == 1 &&
+                       weekPlans.First().WeekNumber == 1 &&
                        exercises.Count == 2 &&
                        exercises.All(e => e.WeekPlanId == weekPlans.First().Id);
 
@@ -75,10 +80,10 @@ public class TimeFreezeVerificationLogic : ITimeFreezeVerificationLogic
     {
         const int lastDayOfWeek1 = 6;
         SetMockTimeByDaysOffset(lastDayOfWeek1);
-        
+
         await _exerciseLogic.CreateExerciseAsync(CreateTestExerciseRequest(notes: "Day 6 - last day of week 1"));
         var weekPlan1 = _dbContext.WeekPlan.FirstOrDefault();
-        
+
         bool week1Success = weekPlan1?.WeekNumber == 1;
 
         _dbContext.WeekPlan.RemoveRange(_dbContext.WeekPlan);
@@ -86,10 +91,10 @@ public class TimeFreezeVerificationLogic : ITimeFreezeVerificationLogic
 
         const int firstDayOfWeek2 = 7;
         SetMockTimeByDaysOffset(firstDayOfWeek2);
-        
+
         await _exerciseLogic.CreateExerciseAsync(CreateTestExerciseRequest(notes: "Day 7 - first day of week 2"));
         var weekPlan2 = _dbContext.WeekPlan.FirstOrDefault();
-        
+
         bool week2Success = weekPlan2?.WeekNumber == 2;
 
         return (week1Success, week2Success);
@@ -99,7 +104,7 @@ public class TimeFreezeVerificationLogic : ITimeFreezeVerificationLogic
     {
         const int negativeDaysOffset = -7;
         var weekPlan = await CreateExerciseAtSpecificDay(negativeDaysOffset, "Past date test");
-        
+
         return weekPlan?.WeekNumber ?? -1;
     }
 
@@ -146,6 +151,22 @@ public class TimeFreezeVerificationLogic : ITimeFreezeVerificationLogic
         };
         _dbContext.TrainingPlan.Add(trainingPlan);
 
+        var muscleGroup = new MuscleGroup
+        {
+            Id = Guid.NewGuid(),
+            Name = "Test Muscle Group"
+        };
+        _dbContext.MuscleGroup.Add(muscleGroup);
+
+        var exerciseTemplate = new ExerciseTemplate
+        {
+            Id = Guid.NewGuid(),
+            Name = "Test Exercise Template",
+            MuscleGroupId = muscleGroup.Id
+        };
+        _dbContext.ExerciseTemplate.Add(exerciseTemplate);
+        _exerciseTemplateId = exerciseTemplate.Id;
+
         await _dbContext.SaveChangesAsync();
     }
 
@@ -163,7 +184,7 @@ public class TimeFreezeVerificationLogic : ITimeFreezeVerificationLogic
             RPE = rpe,
             Day = day,
             Notes = notes ?? $"Test exercise - Reps:{reps} Sets:{sets}",
-            ExerciseTemplateId = Guid.Empty
+            ExerciseTemplateId = _exerciseTemplateId
         };
     }
 

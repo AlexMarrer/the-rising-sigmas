@@ -4,13 +4,14 @@ using RisingSigma.Api.DTOs;
 using RisingSigma.Api.Logic;
 using RisingSigma.Database;
 using RisingSigma.Database.Entities;
+using Microsoft.Data.Sqlite;
 
 namespace RisingSigma.Api.Test.Logic;
 
 public class ExerciseUpdateVerifier : IExerciseUpdateVerifier
 {
   #region Fields & Dependencies
-  private readonly ApplicationDbContext _db;
+  private readonly TestApplicationDbContext _db;
   private readonly ExerciseLogic _logic;
   private readonly Mock<ITimeProvider> _timeMock = new();
   private readonly Mock<Microsoft.Extensions.Configuration.IConfiguration> _configMock = new();
@@ -21,18 +22,62 @@ public class ExerciseUpdateVerifier : IExerciseUpdateVerifier
   public Guid TemplateId { get; private set; }
   #endregion
 
-  #region Construction & Seeding
+  #region Construction
   public ExerciseUpdateVerifier()
   {
+    var connection = new SqliteConnection("Data Source=:memory:");
+    connection.Open();
+
     var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-      .UseInMemoryDatabase(Guid.NewGuid().ToString())
-      .EnableSensitiveDataLogging()
-      .Options;
-    _db = new ApplicationDbContext(options);
+        .UseSqlite(connection)
+        .EnableSensitiveDataLogging()
+        .Options;
+    _db = new TestApplicationDbContext(options);
+    _db.Database.EnsureCreated();
+
     _timeMock.Setup(t => t.UtcNow).Returns(DateTime.UtcNow);
     SeedBaseData();
     _logic = new ExerciseLogic(_db, _configMock.Object, _timeMock.Object);
   }
+  #endregion
+
+  #region API
+
+  public async Task<ExerciseDto> UpdateAsync(Guid exerciseId, UpdateExerciseRequestDto request)
+    => await _logic.UpdateExerciseAsync(exerciseId, request);
+
+  public Exercise GetExerciseEntity() => _db.Exercise.First(e => e.Id == ExerciseId);
+
+  public int SaveCalls => _db.SaveChangesCalls;
+
+  public Guid AddNewTemplate(string name = "New Template", string muscleGroupName = "Chest")
+  {
+    var mg = _db.MuscleGroup.FirstOrDefault(m => m.Name == muscleGroupName) ?? new MuscleGroup { Id = Guid.NewGuid(), Name = muscleGroupName };
+    if (_db.Entry(mg).State == EntityState.Detached)
+    {
+      _db.MuscleGroup.Add(mg);
+    }
+
+    var template = new ExerciseTemplate
+    {
+      Id = Guid.NewGuid(),
+      Name = name,
+      MuscleGroupId = mg.Id
+    };
+
+    _db.ExerciseTemplate.Add(template);
+    _db.SaveChanges();
+
+    return template.Id;
+  }
+
+  public UpdateExerciseRequestDto MakeRequest(int reps = 12, int sets = 4, double rpe = 8.0, string? notes = "updated", int day = 3, Guid? templateId = null)
+    => new() { Reps = reps, Sets = sets, RPE = rpe, Notes = notes ?? string.Empty, Day = day, ExerciseTemplateId = templateId ?? TemplateId };
+
+  public Task<ExerciseDto> UpdateAsync(UpdateExerciseRequestDto request) => UpdateAsync(ExerciseId, request);
+  #endregion
+
+  #region Seeding
 
   private void SeedBaseData()
   {
@@ -44,31 +89,9 @@ public class ExerciseUpdateVerifier : IExerciseUpdateVerifier
     TemplateId = template.Id;
     var exercise = new Exercise { Id = Guid.NewGuid(), Day = DayOfWeek.Monday, ExerciseTemplateId = template.Id, Reps = 10, Sets = 3, RPE = 7.5, WeekPlanId = weekPlan.Id, notes = "orig" };
     ExerciseId = exercise.Id;
+
     _db.Exercise.Add(exercise);
     _db.SaveChanges();
-  }
-  #endregion
-
-  #region API
-  public UpdateExerciseRequestDto MakeRequest(int reps = 12, int sets = 4, double rpe = 8.0, string? notes = "updated", int day = 3, Guid? templateId = null)
-    => new() { Reps = reps, Sets = sets, RPE = rpe, Notes = notes ?? string.Empty, Day = day, ExerciseTemplateId = templateId ?? TemplateId };
-
-  public Task<ExerciseDto> UpdateAsync(UpdateExerciseRequestDto request) => UpdateAsync(ExerciseId, request);
-
-  public async Task<ExerciseDto> UpdateAsync(Guid exerciseId, UpdateExerciseRequestDto request)
-    => await _logic.UpdateExerciseAsync(exerciseId, request);
-
-  public Exercise GetExerciseEntity() => _db.Exercise.First(e => e.Id == ExerciseId);
-
-  public Guid AddNewTemplate(string name = "New Template", string muscleGroupName = "Chest")
-  {
-    var mg = _db.MuscleGroup.FirstOrDefault(m => m.Name == muscleGroupName) ?? new MuscleGroup { Id = Guid.NewGuid(), Name = muscleGroupName };
-    if (_db.Entry(mg).State == EntityState.Detached)
-      _db.MuscleGroup.Add(mg);
-    var template = new ExerciseTemplate { Id = Guid.NewGuid(), Name = name, MuscleGroupId = mg.Id };
-    _db.ExerciseTemplate.Add(template);
-    _db.SaveChanges();
-    return template.Id;
   }
   #endregion
 
